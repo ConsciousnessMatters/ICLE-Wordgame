@@ -20,8 +20,8 @@ export default class GridCell {
 
     render() {
         console.debug('GridCell render() method.')
-        const xOffset = (this.row * this.columnWidth) + this.gridOffsetX
-        const yOffset = (this.column * this.rowHeight) + this.gridOffsetY
+        const xOffset = (this.column * this.columnWidth) + this.gridOffsetX
+        const yOffset = (this.row * this.rowHeight) + this.gridOffsetY
         const centerCell = this.column === 7 && this.row === 7
 
         this.canvasContext.lineWidth = 1
