@@ -26,6 +26,14 @@ export default class TileRack {
                 })
             })
         })
+        this.letters = []
+    }
+
+    addLetters(newLetters) {
+        this.letters = [
+            ...this.letters,
+            ...newLetters,
+        ]
     }
 
     render() {
