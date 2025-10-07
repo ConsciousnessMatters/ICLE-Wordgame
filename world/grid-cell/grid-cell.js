@@ -22,10 +22,19 @@ export default class GridCell {
         console.debug('GridCell render() method.')
         const xOffset = (this.row * this.columnWidth) + this.gridOffsetX
         const yOffset = (this.column * this.rowHeight) + this.gridOffsetY
+        const centerCell = this.column === 7 && this.row === 7
 
         this.canvasContext.lineWidth = 1
-        this.canvasContext.strokeStyle = '#ffffff44'
-        this.canvasContext.strokeRect(xOffset + 1, yOffset + 1, this.columnWidth - 2, this.rowHeight - 2)
+
+        if (centerCell) {
+            this.canvasContext.strokeStyle = '#ffffff88'
+            this.canvasContext.fillStyle = '#ffffff22';
+            this.canvasContext.fillRect(xOffset + 1, yOffset + 1, this.columnWidth - 2, this.rowHeight - 2);
+            this.canvasContext.strokeRect(xOffset + 1, yOffset + 1, this.columnWidth - 2, this.rowHeight - 2)
+        } else {
+            this.canvasContext.strokeStyle = '#ffffff44'
+            this.canvasContext.strokeRect(xOffset + 1, yOffset + 1, this.columnWidth - 2, this.rowHeight - 2)
+        }
 
         console.debug({
             xOffset,
