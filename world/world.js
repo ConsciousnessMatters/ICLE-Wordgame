@@ -1,4 +1,4 @@
-import Grid from './grid/grid.js'
+import Board from './board/board.js'
 import TileRack from './tile-rack/tile-rack.js'
 import LettersBag from './letters-bag/letters-bag.js'
 
@@ -6,7 +6,7 @@ export default class World {
 
     constructor(canvasContext) {
         this.canvasContext = canvasContext
-        this.grid = new Grid(this.canvasContext)
+        this.board = new Board(this.canvasContext)
         this.tileRack = new TileRack(this.canvasContext)
         this.lettersBag = new LettersBag(this.canvasContext)
 
@@ -28,7 +28,7 @@ export default class World {
                 y: e.y,
             })
 
-            const test1 = this.grid.getCellAtLocation({
+            const test1 = this.board.getCellAtLocation({
                 x: e.x,
                 y: e.y,
             })
@@ -55,7 +55,7 @@ export default class World {
     }
 
     render() {
-        this.grid.render()
+        this.board.render()
         this.tileRack.render()
         this.lettersBag.render()
     }

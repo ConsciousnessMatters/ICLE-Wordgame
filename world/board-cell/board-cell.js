@@ -1,4 +1,4 @@
-export default class GridCell {
+export default class BoardCell {
 
     constructor({ 
         canvasContext, 
