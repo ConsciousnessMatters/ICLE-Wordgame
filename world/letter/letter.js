@@ -1,4 +1,9 @@
 export default class Letter {
+    x = null
+    y = null
+    width = null
+    height = null
+
     constructor(canvasContext, type) {
         this.canvasContext = canvasContext
 
@@ -39,7 +44,26 @@ export default class Letter {
         }
     }
 
+    setLocation({ x, y, width, height }) {
+        this.x = x
+        this.y = y
+        this.width = width
+        this.height = height
+    }
+
     render() {
         console.debug('Letter render() method.')
+        console.debug(this.type)
+
+        this.canvasContext.beginPath()
+        this.canvasContext.fillStyle = '#eeeeee'
+        this.canvasContext.roundRect(this.x + 1, this.y + 1, this.width - 2, this.height - 2, 2)
+        this.canvasContext.fill()
+
+        this.canvasContext.fillStyle = '#000000'
+        this.canvasContext.textAlign = 'center'
+        this.canvasContext.font = '24px sans-serif'
+        this.canvasContext.textBaseline = 'middle'
+        this.canvasContext.fillText(this.type, this.x + (this.width / 2), this.y + (this.height / 2))
     }
 }

@@ -26,21 +26,26 @@ export default class TileRack {
                 })
             })
         })
-        this.letters = []
     }
 
     addLetters(newLetters) {
-        this.letters = [
-            ...this.letters,
-            ...newLetters,
-        ]
+        newLetters.forEach((newLetter) => {
+            this.cells.forEach((row) => {
+                row.some((cell) => {
+                    if (! cell.hasLetter()) {
+                        cell.addLetter(newLetter)
+                        return true
+                    }
+                })
+            })
+        })
     }
 
     render() {
         console.debug('Grid render() method.')
         this.cells.forEach((row) => {
-            return row.forEach((cell) => {
-                return cell.render()
+            row.forEach((cell) => {
+                cell.render()
             })
         })
     }

@@ -16,6 +16,15 @@ export default class GridCell {
         this.gridOffsetY = gridOffsetY
         this.rowHeight = rowHeight
         this.columnWidth = columnWidth
+        this.letter = null
+    }
+
+    hasLetter() {
+        return this.letter !== null
+    }
+
+    addLetter(letter) {
+        this.letter = letter
     }
 
     render() {
@@ -34,6 +43,16 @@ export default class GridCell {
         } else {
             this.canvasContext.strokeStyle = '#ffffff44'
             this.canvasContext.strokeRect(xOffset + 1, yOffset + 1, this.columnWidth - 2, this.rowHeight - 2)
+        }
+
+        if (this.hasLetter()) {
+            this.letter.setLocation({
+                x: xOffset + 1,
+                y: yOffset + 1,
+                width: this.columnWidth - 2,
+                height: this.rowHeight - 2
+            })
+            this.letter.render()
         }
 
         console.debug({
