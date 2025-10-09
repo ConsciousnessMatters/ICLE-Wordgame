@@ -51,9 +51,6 @@ export default class Letter {
     }
 
     render() {
-        console.debug('Letter render() method.')
-        console.debug(this.type)
-
         this.canvasContext.beginPath()
         this.canvasContext.fillStyle = '#eeeeee'
         this.canvasContext.roundRect(this.x + 1, this.y + 1, this.width - 2, this.height - 2, 2)

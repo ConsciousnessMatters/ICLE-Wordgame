@@ -52,6 +52,5 @@ export default class LettersBag {
     }
 
     render() {
-        console.debug('LettersBag render() method.')
     }
 }

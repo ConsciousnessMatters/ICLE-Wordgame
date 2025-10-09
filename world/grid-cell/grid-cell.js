@@ -28,7 +28,6 @@ export default class GridCell {
     }
 
     render() {
-        console.debug('GridCell render() method.')
         const xOffset = (this.column * this.columnWidth) + this.gridOffsetX
         const yOffset = (this.row * this.rowHeight) + this.gridOffsetY
         const centerCell = this.column === 7 && this.row === 7
@@ -54,10 +53,5 @@ export default class GridCell {
             })
             this.letter.render()
         }
-
-        console.debug({
-            xOffset,
-            yOffset,
-        })
     }
 }

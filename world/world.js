@@ -11,6 +11,7 @@ export default class World {
         this.lettersBag = new LettersBag(this.canvasContext)
 
         this.setupTileRacks()
+        this.setupDragAndDrop()
     }
 
     setupTileRacks() {
@@ -18,8 +19,22 @@ export default class World {
         this.tileRack.addLetters(newLetters)
     }
 
+    setupDragAndDrop() {
+        this.canvasContext.canvas.addEventListener('pointerdown', (e) => {
+            console.debug(e)
+        })
+        this.canvasContext.canvas.addEventListener('pointermove', (e) => {
+            console.debug(e)
+        })
+        this.canvasContext.canvas.addEventListener('pointerup', (e) => {
+            console.debug(e)
+        })
+        this.canvasContext.canvas.addEventListener('pointercancel', (e) => {
+            console.debug(e)
+        })
+    }
+
     render() {
-        console.debug('World render() method.')
         this.grid.render()
         this.tileRack.render()
         this.lettersBag.render()

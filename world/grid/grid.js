@@ -28,10 +28,9 @@ export default class Grid {
     }
 
     render() {
-        console.debug('Grid render() method.')
         this.cells.forEach((row) => {
-            return row.forEach((cell) => {
-                return cell.render()
+            row.forEach((cell) => {
+                cell.render()
             })
         })
     }

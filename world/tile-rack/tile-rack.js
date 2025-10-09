@@ -42,7 +42,6 @@ export default class TileRack {
     }
 
     render() {
-        console.debug('Grid render() method.')
         this.cells.forEach((row) => {
             row.forEach((cell) => {
                 cell.render()
