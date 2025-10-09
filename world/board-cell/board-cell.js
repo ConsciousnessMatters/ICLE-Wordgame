@@ -29,6 +29,12 @@ export default class BoardCell {
         this.letter = letter
     }
 
+    removeLetter() {
+        const letter = this.letter
+        this.letter = null
+        return letter
+    }
+
     isAtLocation({ x, y }) {
         const x1 = this.xOffset
         const x2 = this.xOffset + this.columnWidth

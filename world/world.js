@@ -20,38 +20,69 @@ export default class World {
     }
 
     setupDragAndDrop() {
+        let movingLetter,
+            moveOriginCell
+
         this.canvasContext.canvas.addEventListener('pointerdown', (e) => {
-            console.debug(e)
+            // console.debug(e)
 
             console.debug({
                 x: e.x,
                 y: e.y,
             })
 
-            const test1 = this.board.getCellAtLocation({
+            const boardCell = this.board.getCellAtLocation({
                 x: e.x,
                 y: e.y,
             })
 
-            const test2 = this.tileRack.getCellAtLocation({
+            const tileRackCell = this.tileRack.getCellAtLocation({
                 x: e.x,
                 y: e.y,
             })
+
+            if (tileRackCell && tileRackCell.hasLetter()) {
+                moveOriginCell = tileRackCell
+                movingLetter = tileRackCell.removeLetter()
+            }
+
+            this.clear()
+            this.render()
 
             console.debug({
-                test1,
-                test2,
+                boardCell,
+                tileRackCell,
             })
         })
         this.canvasContext.canvas.addEventListener('pointermove', (e) => {
             // console.debug(e)
         })
         this.canvasContext.canvas.addEventListener('pointerup', (e) => {
-            // console.debug(e)
+            const boardCell = this.board.getCellAtLocation({
+                x: e.x,
+                y: e.y,
+            })
+
+            const tileRackCell = this.tileRack.getCellAtLocation({
+                x: e.x,
+                y: e.y,
+            })
+
+            if (movingLetter && boardCell && ! boardCell.hasLetter()) {
+                boardCell.addLetter(movingLetter)
+                movingLetter = null
+
+                this.clear()
+                this.render()
+            }
         })
         this.canvasContext.canvas.addEventListener('pointercancel', (e) => {
             // console.debug(e)
         })
+    }
+
+    clear() {
+        this.canvasContext.clearRect(0, 0, this.canvasContext.canvas.width, this.canvasContext.canvas.height)
     }
 
     render() {
