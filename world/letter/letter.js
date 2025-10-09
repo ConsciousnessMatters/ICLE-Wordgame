@@ -15,8 +15,7 @@ export default class Letter {
     }
 
     getValueFromType(type) {
-
-        switch (ch.toUpperCase()) {
+        switch (type) {
             case 'D':
             case 'G':
                 return 2
@@ -65,5 +64,8 @@ export default class Letter {
         this.canvasContext.font = '24px sans-serif'
         this.canvasContext.textBaseline = 'middle'
         this.canvasContext.fillText(this.type, this.x + (this.width / 2), this.y + (this.height / 2))
+
+        this.canvasContext.font = '9px sans-serif'
+        this.canvasContext.fillText(this.getValueFromType(this.type), this.x + (this.width - 8), this.y + (this.height - 8))
     }
 }
