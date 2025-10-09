@@ -13,39 +13,42 @@ export default class TileRack {
         const gridOffsetX = (canvasWidth / 2) - (gridWidth / 2)
 
         this.canvasContext = canvasContext
-        this.cells = Array.from({ length: this.rows }).map((_, row) => {
-            return Array.from({ length: this.columns }).map((_, column) => {
-                return new Cell({
-                    canvasContext: this.canvasContext, 
-                    row, 
-                    column,
-                    gridOffsetX,
-                    gridOffsetY: canvasHeight - 60,
-                    rowHeight: this.rowHeight,
-                    columnWidth: this.columnWidth,
-                })
+        this.cells = Array.from({ length: this.rows * this.columns }).map((_, position) => {
+            const row = Math.floor(position / this.columns)
+            const column = position % this.columns
+
+            return new Cell({
+                canvasContext: this.canvasContext,
+                row,
+                column,
+                gridOffsetX,
+                gridOffsetY: canvasHeight - 60,
+                rowHeight: this.rowHeight,
+                columnWidth: this.columnWidth,
             })
         })
     }
 
     addLetters(newLetters) {
         newLetters.forEach((newLetter) => {
-            this.cells.forEach((row) => {
-                row.some((cell) => {
+            this.cells.some((cell) => {
                     if (! cell.hasLetter()) {
                         cell.addLetter(newLetter)
                         return true
                     }
                 })
-            })
+        })
+    }
+    
+    getCellAtLocation({ x, y }) {
+        return this.cells.find((cell) => {
+            return cell.isAtLocation({ x, y })
         })
     }
 
     render() {
-        this.cells.forEach((row) => {
-            row.forEach((cell) => {
-                cell.render()
-            })
+        this.cells.forEach((cell) => {
+            cell.render()
         })
     }
 }

@@ -22,15 +22,35 @@ export default class World {
     setupDragAndDrop() {
         this.canvasContext.canvas.addEventListener('pointerdown', (e) => {
             console.debug(e)
+
+            console.debug({
+                x: e.x,
+                y: e.y,
+            })
+
+            const test1 = this.grid.getCellAtLocation({
+                x: e.x,
+                y: e.y,
+            })
+
+            const test2 = this.tileRack.getCellAtLocation({
+                x: e.x,
+                y: e.y,
+            })
+
+            console.debug({
+                test1,
+                test2,
+            })
         })
         this.canvasContext.canvas.addEventListener('pointermove', (e) => {
-            console.debug(e)
+            // console.debug(e)
         })
         this.canvasContext.canvas.addEventListener('pointerup', (e) => {
-            console.debug(e)
+            // console.debug(e)
         })
         this.canvasContext.canvas.addEventListener('pointercancel', (e) => {
-            console.debug(e)
+            // console.debug(e)
         })
     }
 
