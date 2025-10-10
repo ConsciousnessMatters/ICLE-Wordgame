@@ -93,11 +93,14 @@ export default class World {
 
             if (movingLetter && boardCell && ! boardCell.hasLetter()) {
                 boardCell.addLetter(movingLetter)
-
                 this.reRender()
             }
 
-            movingLetter = null
+            if (movingLetter) {
+                moveOriginCell.addLetter(movingLetter)
+                movingLetter = null
+                this.reRender()
+            }
         })
         
         this.canvasContext.canvas.addEventListener('pointercancel', (e) => {
