@@ -1,5 +1,5 @@
 import Grid from '../grid/grid.js'
-import Cell from '../board-cell/board-cell.js'
+import Cell from '../cell/cell.js'
 
 export default class Board extends Grid {
     rows = 15

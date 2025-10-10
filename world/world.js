@@ -46,17 +46,40 @@ export default class World {
                 movingLetter = tileRackCell.removeLetter()
             }
 
-            this.clear()
-            this.render()
+            this.reRender()
+
+            if (movingLetter) {
+                movingLetter.setLocation({
+                    x: e.x,
+                    y: e.y,
+                    origin: 'center',
+                })
+                movingLetter.render()
+            }
 
             console.debug({
                 boardCell,
                 tileRackCell,
             })
         })
+
         this.canvasContext.canvas.addEventListener('pointermove', (e) => {
-            // console.debug(e)
+            if (movingLetter) {
+                this.reRender()
+
+                movingLetter.setLocation({
+                    x: e.x,
+                    y: e.y,
+                    origin: 'center',
+                })
+                movingLetter.render()
+            }
+            console.debug({
+                x: e.x,
+                y: e.y,
+            })
         })
+
         this.canvasContext.canvas.addEventListener('pointerup', (e) => {
             const boardCell = this.board.getCellAtLocation({
                 x: e.x,
@@ -70,12 +93,13 @@ export default class World {
 
             if (movingLetter && boardCell && ! boardCell.hasLetter()) {
                 boardCell.addLetter(movingLetter)
-                movingLetter = null
 
-                this.clear()
-                this.render()
+                this.reRender()
             }
+
+            movingLetter = null
         })
+        
         this.canvasContext.canvas.addEventListener('pointercancel', (e) => {
             // console.debug(e)
         })
@@ -89,5 +113,10 @@ export default class World {
         this.board.render()
         this.tileRack.render()
         this.lettersBag.render()
+    }
+
+    reRender() {
+        this.clear()
+        this.render()
     }
 }

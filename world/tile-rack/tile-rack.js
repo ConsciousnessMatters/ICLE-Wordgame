@@ -1,5 +1,5 @@
 import Grid from '../grid/grid.js'
-import Cell from '../board-cell/board-cell.js'
+import Cell from '../cell/cell.js'
 
 export default class TileRack extends Grid {
     rows = 1
@@ -30,7 +30,7 @@ export default class TileRack extends Grid {
             })
         })
     }
-    
+
     addLetters(newLetters) {
         newLetters.forEach((newLetter) => {
             this.cells.some((cell) => {

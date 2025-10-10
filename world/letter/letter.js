@@ -43,11 +43,29 @@ export default class Letter {
         }
     }
 
-    setLocation({ x, y, width, height }) {
-        this.x = x
-        this.y = y
-        this.width = width
-        this.height = height
+    setLocation(parameters) {
+        const { x, y, width, height, origin = 'topleft' } = parameters
+
+        switch(origin) {
+            case 'topleft':
+                return this.setLocationFromTopLeft(parameters)
+            case 'center':
+                return this.setLocationFromCenter(parameters)
+        }
+    }
+
+    setLocationFromTopLeft({ x, y, width, height }) {
+        this.x = x ?? this.x
+        this.y = y ?? this.y
+        this.width = width ?? this.width
+        this.height = height ?? this.height
+    }
+
+    setLocationFromCenter({ x, y, width, height }) {
+        this.x = (x ?? this.x) - ((width ?? this.width) / 2)
+        this.y = (y ?? this.y) - ((height ?? this.height) / 2)
+        this.width = width ?? this.width
+        this.height = height ?? this.height
     }
 
     render() {
