@@ -23,14 +23,15 @@ export default class World {
         let movingLetter,
             moveOriginCell
 
+        const cancelDrag = () => {
+            if (movingLetter) {
+                moveOriginCell.addLetter(movingLetter)
+                movingLetter = null
+                this.reRender()
+            }
+        }
+
         this.canvasContext.canvas.addEventListener('pointerdown', (e) => {
-            // console.debug(e)
-
-            console.debug({
-                x: e.x,
-                y: e.y,
-            })
-
             const boardCell = this.board.getCellAtLocation({
                 x: e.x,
                 y: e.y,
@@ -56,11 +57,6 @@ export default class World {
                 })
                 movingLetter.render()
             }
-
-            console.debug({
-                boardCell,
-                tileRackCell,
-            })
         })
 
         this.canvasContext.canvas.addEventListener('pointermove', (e) => {
@@ -74,10 +70,6 @@ export default class World {
                 })
                 movingLetter.render()
             }
-            console.debug({
-                x: e.x,
-                y: e.y,
-            })
         })
 
         this.canvasContext.canvas.addEventListener('pointerup', (e) => {
@@ -93,18 +85,19 @@ export default class World {
 
             if (movingLetter && boardCell && ! boardCell.hasLetter()) {
                 boardCell.addLetter(movingLetter)
-                this.reRender()
-            }
-
-            if (movingLetter) {
-                moveOriginCell.addLetter(movingLetter)
                 movingLetter = null
                 this.reRender()
             }
+
+            cancelDrag()
         })
         
         this.canvasContext.canvas.addEventListener('pointercancel', (e) => {
-            // console.debug(e)
+            cancelDrag()
+        })
+
+        this.canvasContext.canvas.addEventListener('pointerout', (e) => {
+            cancelDrag()
         })
     }
 
