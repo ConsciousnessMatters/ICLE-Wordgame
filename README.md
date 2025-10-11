@@ -14,9 +14,9 @@ ICLE is the ultimate black mirror of true consciousness.
 *If it quacks like a duck, if it walks like a duck, if it eats and swims like a duck... sometimes... it's not a duck.*
 
 ### Development Plan
-Phase 1: Create world which has rules, win conditions and most importantly, possibility spaces for action or... choice.  
-Phase 2: Create a traditional narrow band AI to play the game.  
-Phase 3: ICLE - More to be Announced.  
+**Phase 1:** Create world which has rules, win conditions and most importantly, possibility spaces for action or... choice.  
+**Phase 2:** Create a traditional narrow band AI to play the game.  
+**Phase 3:** ICLE - More to be Announced.  
 
 ## How To Run
 I'd wanted to make this so you could run it locally without hosting, but due to CORS security requirements for ES6 JavaScript modules it must be run through a local webserver. You can run the following command in the project root (if you're on a Mac, probably also for linux) (where the .html file is):
