@@ -40,4 +40,46 @@ export default class Line {
 
         return changingIndicesContinuous
     }
+
+    getProvisionalLettersCellGridLocations() {
+        const provisionalLetters = this.getProvisionalLetters()
+        return provisionalLetters.map((cell) => cell.getLocation())
+    }
+
+    getWords() {
+        const words = []
+        let workingWord = []
+
+        for (const cell of this.cells) {
+            if (cell.hasLetter()) {
+                workingWord.push(cell)
+            } else if (workingWord.length) {
+                words.push(new Line(workingWord))
+                workingWord = []
+            }
+        }
+
+        if (workingWord.length) {
+            words.push(workingWord)
+        }
+
+        return words
+    }
+
+    getWordAtIndex(index) {
+        const words = this.getWords()
+        return words.find((word) => word.containsLineIndex(index))
+    }
+
+    containsLineIndex(lineIndex) {
+        if (! this.cells) {
+            return false
+        }
+
+        if (this.isRow()) {
+            return this.cells.some((cell) => cell.getColumnIndex() === lineIndex)
+        } else {
+            return this.cells.some((cell) => cell.getRowIndex() === lineIndex)
+        }
+    }
 }

@@ -16,6 +16,10 @@ export default class Letter {
         }
     }
 
+    getType() {
+        return this.type
+    }
+
     getValueFromType(type) {
         switch (type) {
             case 'D':

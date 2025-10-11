@@ -39,6 +39,10 @@ export default class BoardCell {
         return letter
     }
 
+    getLetterType() {
+        return this.letter ? this.letter.getType() : null
+    }
+
     isAtLocation({ x, y }) {
         const x1 = this.xOffset
         const x2 = this.xOffset + this.columnWidth
@@ -65,6 +69,13 @@ export default class BoardCell {
 
     getRowIndex() {
         return this.row
+    }
+
+    getLocation() {
+        return {
+            x: this.getColumnIndex(),
+            y: this.getRowIndex(),
+        }
     }
 
     render() {

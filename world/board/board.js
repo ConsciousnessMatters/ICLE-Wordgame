@@ -54,24 +54,57 @@ export default class Board extends Grid {
         })
     }
 
-    isLetterPlacementValid() {
+    getColumnsAndRowsWithProvisionalLetters() {
         const columnsWithProvisionalLetters = this.getColumns().filter((column) => column.containsProvisionalLetters())
         const rowsWithProvisionalLetters = this.getRows().filter((row) => row.containsProvisionalLetters())
+
+        return {
+            columnsWithProvisionalLetters,
+            rowsWithProvisionalLetters,
+        }
+    }
+
+    getProvisionalLine() {
+        const { columnsWithProvisionalLetters, rowsWithProvisionalLetters } = this.getColumnsAndRowsWithProvisionalLetters()
+        const [ provisionalLine ] = columnsWithProvisionalLetters.length === 1 ? columnsWithProvisionalLetters : rowsWithProvisionalLetters
+        return provisionalLine
+    }
+
+    isLetterPlacementValid() {
+        const { columnsWithProvisionalLetters, rowsWithProvisionalLetters } = this.getColumnsAndRowsWithProvisionalLetters()
         const areLettersPlaced = columnsWithProvisionalLetters.length !== 0
         const isLine = ! (columnsWithProvisionalLetters.length > 1 && rowsWithProvisionalLetters.length > 1) &&
             (columnsWithProvisionalLetters.length !== 0 && rowsWithProvisionalLetters.length !== 0)
-        const [ provisionalLine ] = columnsWithProvisionalLetters.length === 1 ? columnsWithProvisionalLetters : rowsWithProvisionalLetters
+        const provisionalLine = this.getProvisionalLine()
         const isLineContinuous = isLine && provisionalLine.areProvisionalLettersContinuous()
+
+        // debugger
 
         return areLettersPlaced && isLine && isLineContinuous
     }
 
-    getNewWordTries() {
+    getWordsAtLocation({ x, y }) {
+        const row = this.getRow(y)
+        const column = this.getColumn(x)
 
+        return {
+            rowWord: row.getWordAtIndex(x),
+            columnWord: column.getWordAtIndex(y),
+        }
+    }
+
+    getNewWordTries() {
+        const provisionalLine = this.getProvisionalLine()
+        const provisionalLettersCellLocations = provisionalLine.getProvisionalLettersCellGridLocations()
+
+        const wordsAtLocations = provisionalLettersCellLocations.map((location) => this.getWordsAtLocation(location))
+
+        debugger
     }
 
     endTurn() {
         this.isLetterPlacementValid()
+        this.getNewWordTries()
         console.debug('End Turn')
     }
 }
