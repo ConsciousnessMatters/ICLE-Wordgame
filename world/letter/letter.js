@@ -3,6 +3,8 @@ export default class Letter {
     y = null
     width = null
     height = null
+    type = null
+    turnRollBackCell = null
 
     constructor(canvasContext, type) {
         this.canvasContext = canvasContext
@@ -68,7 +70,27 @@ export default class Letter {
         this.height = height ?? this.height
     }
 
+    getTurnRollBackCell() {
+        return this.turnRollBackCell = cell
+    }
+
+    setTurnRollBackCell(cell) {
+        this.turnRollBackCell = cell
+    }
+
+    clearTurnRollBackCell() {
+        this.turnRollBackCell = null
+    }
+
+    hasTurnRollBackCell() {
+        debugger
+        return this.turnRollBackCell !== null
+    }
+
     render() {
+        if (this.turnRollBackCell) {
+            this.canvasContext.globalAlpha = 0.5
+        }
         this.canvasContext.beginPath()
         this.canvasContext.fillStyle = '#eeeeee'
         this.canvasContext.roundRect(this.x + 1, this.y + 1, this.width - 2, this.height - 2, 2)
@@ -82,5 +104,6 @@ export default class Letter {
 
         this.canvasContext.font = '9px sans-serif'
         this.canvasContext.fillText(this.getValueFromType(this.type), this.x + (this.width - 8), this.y + (this.height - 8))
+        this.canvasContext.globalAlpha = 1
     }
 }

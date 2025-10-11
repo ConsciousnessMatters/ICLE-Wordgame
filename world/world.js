@@ -4,14 +4,16 @@ import LettersBag from './letters-bag/letters-bag.js'
 
 export default class World {
 
-    constructor(canvasContext) {
+    constructor({ canvasContext, words }) {
         this.canvasContext = canvasContext
         this.board = new Board(this.canvasContext)
         this.tileRack = new TileRack(this.canvasContext)
         this.lettersBag = new LettersBag(this.canvasContext)
+        this.words = words
 
         this.setupTileRacks()
         this.setupDragAndDrop()
+        this.setupControls()
     }
 
     setupTileRacks() {
@@ -45,6 +47,12 @@ export default class World {
             if (tileRackCell && tileRackCell.hasLetter()) {
                 moveOriginCell = tileRackCell
                 movingLetter = tileRackCell.removeLetter()
+                movingLetter.setTurnRollBackCell(tileRackCell)
+            }
+
+            if (boardCell && boardCell.hasLetter()) {
+                moveOriginCell = boardCell
+                movingLetter = boardCell.removeLetter()
             }
 
             this.reRender()
@@ -98,6 +106,12 @@ export default class World {
 
         this.canvasContext.canvas.addEventListener('pointerout', (e) => {
             cancelDrag()
+        })
+    }
+
+    setupControls() {
+        document.getElementById('end-turn').addEventListener('click', (e) => {
+            console.debug('End Turn')
         })
     }
 
