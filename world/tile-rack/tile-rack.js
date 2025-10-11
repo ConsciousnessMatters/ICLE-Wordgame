@@ -7,7 +7,7 @@ export default class TileRack extends Grid {
     rowHeight = 40
     columnWidth = 40
 
-    constructor(canvasContext) {
+    constructor({ canvasContext }) {
         super()
         const canvasWidth = canvasContext.canvas.width / 2
         const canvasHeight = canvasContext.canvas.height / 2

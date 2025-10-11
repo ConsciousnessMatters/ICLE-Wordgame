@@ -1,7 +1,7 @@
 import Letter from '../letter/letter.js'
 
 export default class LettersBag {
-    constructor(canvasContext) {
+    constructor({ canvasContext }) {
         this.canvasContext = canvasContext
         this.resetContents()
     }

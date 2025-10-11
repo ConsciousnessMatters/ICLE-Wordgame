@@ -25,6 +25,10 @@ export default class BoardCell {
         return this.letter !== null
     }
 
+    hasProvisionalLetter() {
+        return this.hasLetter() && this.letter.hasTurnRollBackCell()
+    }
+
     addLetter(letter) {
         this.letter = letter
     }
@@ -45,6 +49,22 @@ export default class BoardCell {
         const withinY = y >= y1 && y <= y2
 
         return withinX && withinY
+    }
+
+    isAtColumn(columnNumber) {
+        return this.column === columnNumber
+    }
+
+    isAtRow(rowNumber) {
+        return this.row === rowNumber
+    }
+
+    getColumnIndex() {
+        return this.column
+    }
+
+    getRowIndex() {
+        return this.row
     }
 
     render() {

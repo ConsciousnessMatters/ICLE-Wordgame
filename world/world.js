@@ -6,9 +6,9 @@ export default class World {
 
     constructor({ canvasContext, words }) {
         this.canvasContext = canvasContext
-        this.board = new Board(this.canvasContext)
-        this.tileRack = new TileRack(this.canvasContext)
-        this.lettersBag = new LettersBag(this.canvasContext)
+        this.board = new Board({ canvasContext, words })
+        this.tileRack = new TileRack({ canvasContext })
+        this.lettersBag = new LettersBag({ canvasContext })
         this.words = words
 
         this.setupTileRacks()
@@ -111,7 +111,7 @@ export default class World {
 
     setupControls() {
         document.getElementById('end-turn').addEventListener('click', (e) => {
-            console.debug('End Turn')
+            this.board.endTurn()
         })
     }
 

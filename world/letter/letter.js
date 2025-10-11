@@ -83,7 +83,6 @@ export default class Letter {
     }
 
     hasTurnRollBackCell() {
-        debugger
         return this.turnRollBackCell !== null
     }
 
