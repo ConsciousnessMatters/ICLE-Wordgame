@@ -1,3 +1,5 @@
+import GridLocation from '../grid/grid-location.js'
+
 export default class BoardCell {
 
     constructor({ 
@@ -71,11 +73,12 @@ export default class BoardCell {
         return this.row
     }
 
-    getLocation() {
-        return {
+    getGridLocation() {
+        return new GridLocation({
             x: this.getColumnIndex(),
             y: this.getRowIndex(),
-        }
+            cell: this,
+        })
     }
 
     render() {

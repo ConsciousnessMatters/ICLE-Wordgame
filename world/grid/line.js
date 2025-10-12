@@ -43,7 +43,7 @@ export default class Line {
 
     getProvisionalLettersCellGridLocations() {
         const provisionalLetters = this.getProvisionalLetters()
-        return provisionalLetters.map((cell) => cell.getLocation())
+        return provisionalLetters.map((cell) => cell.getGridLocation())
     }
 
     getWords() {
