@@ -1,6 +1,6 @@
 import Grid from '../grid/grid.js'
 import Cell from '../cell/cell.js'
-import Line from '../grid/line.js'
+import Line, { lineType } from '../grid/line.js'
 import Word from '../grid/word.js'
 import Column from '../grid/column.js'
 import Row from '../grid/row.js'
@@ -103,9 +103,16 @@ export default class Board extends Grid {
                 return false
             })
 
+            const filterType = (provisionalLine instanceof Row) ? lineType.COLUMN : lineType.ROW
+
+            const filterOrthogonal = dedupedIntersectingWords.filter((intersectingWord) => {
+                // ToDo: Score could be factored in here to allow one word orthogonal plays
+                return ! (intersectingWord.lineType === filterType && intersectingWord.cells.length === 1)
+            })
+
             return [
                 ...accumulator,
-                ...dedupedIntersectingWords,
+                ...filterOrthogonal,
             ]
         }, [])
 
