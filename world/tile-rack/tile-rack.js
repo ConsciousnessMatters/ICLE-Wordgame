@@ -34,11 +34,19 @@ export default class TileRack extends Grid {
     addLetters(newLetters) {
         newLetters.forEach((newLetter) => {
             this.cells.some((cell) => {
-                    if (! cell.hasLetter()) {
-                        cell.addLetter(newLetter)
-                        return true
-                    }
-                })
+                if (! cell.hasLetter()) {
+                    cell.addLetter(newLetter)
+                    return true
+                }
+            })
         })
+    }
+
+    countTilesShort() {
+        return this.cells.filter((cell) => {
+            if (! cell.hasLetter()) {
+                return true
+            }
+        }).length
     }
 }

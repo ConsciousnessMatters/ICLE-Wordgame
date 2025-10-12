@@ -21,6 +21,12 @@ export default class World {
         this.tileRack.addLetters(newLetters)
     }
 
+    refreshTileRacks() {
+        const tilesShort = this.tileRack.countTilesShort()
+        const newLetters = this.lettersBag.getRandomLetters(tilesShort)
+        this.tileRack.addLetters(newLetters)
+    }
+
     setupDragAndDrop() {
         let movingLetter,
             moveOriginCell
@@ -97,6 +103,13 @@ export default class World {
                 this.reRender()
             }
 
+            if (movingLetter && tileRackCell && ! tileRackCell.hasLetter()) {
+                tileRackCell.addLetter(movingLetter)
+                tileRackCell.commit()
+                movingLetter = null
+                this.reRender()
+            }
+
             cancelDrag()
         })
         
@@ -112,6 +125,7 @@ export default class World {
     setupControls() {
         document.getElementById('end-turn').addEventListener('click', (e) => {
             this.board.endTurn()
+            this.refreshTileRacks()
             this.reRender()
         })
     }

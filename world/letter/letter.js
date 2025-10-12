@@ -96,13 +96,16 @@ export default class Letter {
 
     rollback(currentCell) {
         const rollbackCell = this.getTurnRollBackCell()
-        rollbackCell.addLetter(this)
-        currentCell.removeLetter()
+
+        if (rollbackCell) {
+            rollbackCell.addLetter(this)
+            currentCell.removeLetter()
+        }
     }
 
     render() {
         if (this.turnRollBackCell) {
-            this.canvasContext.globalAlpha = 0.5
+            this.canvasContext.globalAlpha = 0.75
         }
         this.canvasContext.beginPath()
         this.canvasContext.fillStyle = '#eeeeee'
