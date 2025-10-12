@@ -3,13 +3,16 @@ import TileRack from './tile-rack/tile-rack.js'
 import LettersBag from './letters-bag/letters-bag.js'
 
 export default class World {
+    turn = 1
+    scores = []
 
-    constructor({ canvasContext, words }) {
+    constructor({ canvasContext, words, scoreUpdateFunction }) {
         this.canvasContext = canvasContext
         this.board = new Board({ canvasContext, words })
         this.tileRack = new TileRack({ canvasContext })
         this.lettersBag = new LettersBag({ canvasContext })
         this.words = words
+        this.scoreUpdateFunction = scoreUpdateFunction
 
         this.setupTileRacks()
         this.setupDragAndDrop()
@@ -124,9 +127,16 @@ export default class World {
 
     setupControls() {
         document.getElementById('end-turn').addEventListener('click', (e) => {
-            this.board.endTurn()
+            const newScore = this.board.endTurn()
+            this.scores.push(newScore)
             this.refreshTileRacks()
+            this.scoreUpdateFunction({
+                turnNumber: this.turn,
+                wordPoints: newScore,
+                totalPoints: this.scores.reduce((accumulator, score) => accumulator + score, 0),
+            })
             this.reRender()
+            this.turn++
         })
     }
 

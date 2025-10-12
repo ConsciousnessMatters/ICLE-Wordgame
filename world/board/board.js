@@ -123,6 +123,10 @@ export default class Board extends Grid {
         return words.length ? words.every((word) => word.dictionaryMatch) : false
     }
 
+    scoreWords(words) {
+        return words.length ? words.reduce((accumulator, word) => accumulator + word.calculateScore(), 0) : 0
+    }
+
     commitBoardTiles() {
         this.cells.forEach((cell) => cell.commit())
     }
@@ -135,6 +139,7 @@ export default class Board extends Grid {
         const placementValid = this.isLetterPlacementValid()
         const words = this.getNewWordTries()
         const areAllWordsValid = this.areAllWordsValid(words)
+        const score = this.scoreWords(words)
 
         if (placementValid && areAllWordsValid) {
             this.commitBoardTiles()
@@ -145,5 +150,7 @@ export default class Board extends Grid {
         }
 
         console.debug('End Turn')
+
+        return score
     }
 }
