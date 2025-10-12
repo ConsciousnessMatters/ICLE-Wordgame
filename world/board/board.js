@@ -1,7 +1,11 @@
 import Grid from '../grid/grid.js'
 import Cell from '../cell/cell.js'
+import Line from '../grid/line.js'
+import Word from '../grid/word.js'
 import Column from '../grid/column.js'
 import Row from '../grid/row.js'
+
+Line.registerWordClass(Word)
 
 export default class Board extends Grid {
     rows = 15
@@ -79,26 +83,38 @@ export default class Board extends Grid {
         const provisionalLine = this.getProvisionalLine()
         const isLineContinuous = isLine && provisionalLine.areProvisionalLettersContinuous()
 
-        // debugger
-
         return areLettersPlaced && isLine && isLineContinuous
-    }
-
-    getWordsAtLocation({ x, y }) {
-        const row = this.getRow(y)
-        const column = this.getColumn(x)
-
-        return {
-            rowWord: row.getWordAtIndex(x),
-            columnWord: column.getWordAtIndex(y),
-        }
     }
 
     getNewWordTries() {
         const provisionalLine = this.getProvisionalLine()
-        const provisionalLettersCellLocations = provisionalLine.getProvisionalLettersCellGridLocations()
+        const provisionalLetters = provisionalLine.getProvisionalLetters()
+        const words = provisionalLetters.reduce((accumulator, cell) => [
+            ...accumulator,
+            ...cell.getIntersectingWords(),
+        ], [])
 
-        const wordsAtLocations = provisionalLettersCellLocations.map((location) => this.getWordsAtLocation(location))
+        // Known good point.
+
+        debugger
+
+        // const words = provisionalLettersGridLocations.map((gridLocation) => gridLocation.)
+
+        const wordsAtLocations = provisionalLettersGridLocations.reduce((accumulator, location) => [
+            ...accumulator,
+            this.getWordsAtLocation(location),
+        ], [])
+
+        const wordTextAtLocations = wordsAtLocations.map((line) => ({
+            rowWord: line.rowWord?.toText() ?? null,
+            columnWord: line.columnWord?.toText() ?? null,
+        }))
+
+        const wordsMade = wordTextAtLocations.reduce((accumulator, wordText) => {
+            accumulator.push(wordText.rowWord)
+            accumulator.push(wordText.columnWord)
+            return accumulator
+        }, [])
 
         debugger
     }

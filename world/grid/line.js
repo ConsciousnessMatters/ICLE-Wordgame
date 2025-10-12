@@ -1,10 +1,22 @@
+export const lineType = {
+    ROW: 'Row',
+    COLUMN: 'Column',
+}
+
 export default class Line {
+    static Word
+
+    static registerWordClass(wordClass) {
+        this.Word = wordClass
+    }
+
     cells = null
 
     constructor(cells) {
         this.cells = cells
         this.rowIndices = this.cells.map((cell) => cell.getRowIndex())
         this.columnIndices = this.cells.map((cell) => cell.getColumnIndex())
+        this.text = cells.reduce((accumulator, cell) => accumulator + (cell.getLetterType() ?? '_'), '')
 
         if (this.rowIndices.length === 0 || this.columnIndices.length === 0) {
             throw new Error('Unable to instantiate line with zero rows or zero columns.')
@@ -20,11 +32,11 @@ export default class Line {
     }
 
     isRow() {
-        return new Set(this.rowIndices).size === 1
+        return false
     }
 
     isColumn() {
-        return ! this.isRow()
+        return false
     }
 
     areProvisionalLettersContinuous() {
@@ -43,13 +55,17 @@ export default class Line {
 
     getWords() {
         const words = []
+        const Word = this.constructor.Word
         let workingWord = []
 
         for (const cell of this.cells) {
             if (cell.hasLetter()) {
                 workingWord.push(cell)
             } else if (workingWord.length) {
-                words.push(new Line(workingWord))
+                words.push(new Word({
+                    cells: workingWord,
+                    lineType: this.isRow() ? lineType.ROW : lineType.COLUMN
+                }))
                 workingWord = []
             }
         }
@@ -63,24 +79,20 @@ export default class Line {
 
     getWordAtIndex(index) {
         const words = this.getWords()
-        return words.find((word) => word.startsLineIndex(index))
+        const word = words.find((word) => word.containsLineIndex(index))
+
+        return word
     }
 
-    startsLineIndex(lineIndex) {
+    containsLineIndex(lineIndex) {
         if (! this.cells) {
             return false
         }
 
-        const [ firstCell ] = this.cells
-
         if (this.isRow()) {
-            return firstCell.getColumnIndex() === lineIndex
+            return this.cells.some((cell) => cell.getColumnIndex() === lineIndex)
         } else {
-            return firstCell.getRowIndex() === lineIndex
+            return this.cells.some((cell) => cell.getRowIndex() === lineIndex)
         }
-    }
-
-    toText() {
-        return this.cells.reduce((accumulator, cell) => accumulator + cell.getLetterType(), '')
     }
 }

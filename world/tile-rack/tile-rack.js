@@ -16,13 +16,13 @@ export default class TileRack extends Grid {
 
         this.canvasContext = canvasContext
         this.cells = Array.from({ length: this.rows * this.columns }).map((_, position) => {
-            const row = Math.floor(position / this.columns)
-            const column = position % this.columns
+            const rowIndex = Math.floor(position / this.columns)
+            const columnIndex = position % this.columns
 
             return new Cell({
                 canvasContext: this.canvasContext,
-                row,
-                column,
+                rowIndex,
+                columnIndex,
                 gridOffsetX,
                 gridOffsetY: canvasHeight - 60,
                 rowHeight: this.rowHeight,

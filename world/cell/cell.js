@@ -1,5 +1,3 @@
-import GridLocation from '../grid/grid-location.js'
-
 export default class Cell {
 
     constructor({ 
@@ -73,6 +71,24 @@ export default class Cell {
 
     getRowIndex() {
         return this.rowIndex
+    }
+
+    getColumn() {
+        return this.parent.getColumn(this.columnIndex)
+    }
+
+    getRow() {
+        return this.parent.getRow(this.rowIndex)
+    }
+
+    getIntersectingWords() {
+        const columnWord = this.getColumn().getWordAtIndex(this.rowIndex)
+        const rowWord = this.getRow().getWordAtIndex(this.columnIndex)
+
+        return [
+            columnWord,
+            rowWord,
+        ]
     }
 
     render() {
