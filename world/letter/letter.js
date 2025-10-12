@@ -20,8 +20,8 @@ export default class Letter {
         return this.type
     }
 
-    getValueFromType(type) {
-        switch (type) {
+    getValue() {
+        switch (this.type) {
             case 'D':
             case 'G':
                 return 2
@@ -106,7 +106,7 @@ export default class Letter {
         this.canvasContext.fillText(this.type, this.x + (this.width / 2), this.y + (this.height / 2))
 
         this.canvasContext.font = '9px sans-serif'
-        this.canvasContext.fillText(this.getValueFromType(this.type), this.x + (this.width - 8), this.y + (this.height - 8))
+        this.canvasContext.fillText(this.getValue(), this.x + (this.width - 8), this.y + (this.height - 8))
         this.canvasContext.globalAlpha = 1
     }
 }

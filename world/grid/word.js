@@ -6,7 +6,9 @@ export default class Word extends Line {
         lineType,
     }) {
         super(cells)
-        this.text = cells.reduce((accumulator, cell) => accumulator + cell.getLetterType(), '')
+        this.text = this.toText()
+        this.dictionaryMatch = this.isDictionaryMatch()
+        this.score = this.calculateScore()
         this.lineType = lineType
     }
 
@@ -21,6 +23,17 @@ export default class Word extends Line {
     getPlacementId() {
         const [ firstCell ] = this.cells
         return `x${firstCell.getColumnIndex()}-y${firstCell.getRowIndex()}-${this.lineType}`
+    }
+
+    isDictionaryMatch() {
+        const [ firstCell ] = this.cells
+        const wordToCheck = this.toText()
+        return firstCell.board.words.has(wordToCheck)
+    }
+
+    calculateScore() {
+        const score = this.cells.reduce((accumulator, cell) => accumulator + cell.getLetterValue(), 0)
+        return this.isDictionaryMatch() ? score : 0
     }
 
     toText() {

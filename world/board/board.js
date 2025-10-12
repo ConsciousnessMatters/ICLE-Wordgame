@@ -27,7 +27,7 @@ export default class Board extends Grid {
 
             return new Cell({
                 canvasContext: this.canvasContext,
-                parent: this,
+                board: this,
                 rowIndex,
                 columnIndex,
                 gridOffsetX,
@@ -107,28 +107,6 @@ export default class Board extends Grid {
                 ...accumulator,
                 ...dedupedIntersectingWords,
             ]
-        }, [])
-
-        // Known good point.
-
-        debugger
-
-        // const words = provisionalLettersGridLocations.map((gridLocation) => gridLocation.)
-
-        const wordsAtLocations = provisionalLettersGridLocations.reduce((accumulator, location) => [
-            ...accumulator,
-            this.getWordsAtLocation(location),
-        ], [])
-
-        const wordTextAtLocations = wordsAtLocations.map((line) => ({
-            rowWord: line.rowWord?.toText() ?? null,
-            columnWord: line.columnWord?.toText() ?? null,
-        }))
-
-        const wordsMade = wordTextAtLocations.reduce((accumulator, wordText) => {
-            accumulator.push(wordText.rowWord)
-            accumulator.push(wordText.columnWord)
-            return accumulator
         }, [])
 
         debugger

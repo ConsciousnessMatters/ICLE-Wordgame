@@ -2,7 +2,7 @@ export default class Cell {
 
     constructor({ 
         canvasContext,
-        parent,
+        board,
         rowIndex,
         columnIndex,
         gridOffsetX, 
@@ -11,7 +11,7 @@ export default class Cell {
         columnWidth,
     }) {
         this.canvasContext = canvasContext
-        this.parent = parent
+        this.board = board
         this.rowIndex = rowIndex
         this.columnIndex = columnIndex
         this.gridOffsetX = gridOffsetX
@@ -45,6 +45,10 @@ export default class Cell {
         return this.letter ? this.letter.getType() : null
     }
 
+    getLetterValue() {
+        return this.letter ? this.letter.getValue() : null
+    }
+
     isAtPixelLocation({ x, y }) {
         const x1 = this.xOffset
         const x2 = this.xOffset + this.columnWidth
@@ -74,11 +78,11 @@ export default class Cell {
     }
 
     getColumn() {
-        return this.parent.getColumn(this.columnIndex)
+        return this.board.getColumn(this.columnIndex)
     }
 
     getRow() {
-        return this.parent.getRow(this.rowIndex)
+        return this.board.getRow(this.rowIndex)
     }
 
     getIntersectingWords() {
