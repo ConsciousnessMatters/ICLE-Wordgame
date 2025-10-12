@@ -68,18 +68,24 @@ export default class Line {
 
     getWordAtIndex(index) {
         const words = this.getWords()
-        return words.find((word) => word.containsLineIndex(index))
+        return words.find((word) => word.startsLineIndex(index))
     }
 
-    containsLineIndex(lineIndex) {
+    startsLineIndex(lineIndex) {
         if (! this.cells) {
             return false
         }
 
+        const [ firstCell ] = this.cells
+
         if (this.isRow()) {
-            return this.cells.some((cell) => cell.getColumnIndex() === lineIndex)
+            return firstCell.getColumnIndex() === lineIndex
         } else {
-            return this.cells.some((cell) => cell.getRowIndex() === lineIndex)
+            return firstCell.getRowIndex() === lineIndex
         }
+    }
+
+    toText() {
+        return this.cells.reduce((accumulator, cell) => accumulator + cell.getLetterType(), '')
     }
 }
