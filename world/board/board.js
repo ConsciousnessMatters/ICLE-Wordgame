@@ -18,13 +18,14 @@ export default class Board extends Grid {
 
         this.canvasContext = canvasContext
         this.cells = Array.from({ length: this.rows * this.columns }).map((_, position) => {
-            const row = Math.floor(position / this.columns)
-            const column = position % this.columns
+            const rowIndex = Math.floor(position / this.columns)
+            const columnIndex = position % this.columns
 
             return new Cell({
                 canvasContext: this.canvasContext,
-                row,
-                column,
+                parent: this,
+                rowIndex,
+                columnIndex,
                 gridOffsetX,
                 gridOffsetY: 20,
                 rowHeight: this.rowHeight,
@@ -34,12 +35,12 @@ export default class Board extends Grid {
         this.words = words
     }
 
-    getColumn(columnNumber) {
-        return new Column(this.cells.filter((cell) => cell.isAtColumn(columnNumber)))
+    getColumn(columnIndex) {
+        return new Column(this.cells.filter((cell) => cell.isAtColumnIndex(columnIndex)))
     }
 
-    getRow(rowNumber) {
-        return new Row(this.cells.filter((cell) => cell.isAtRow(rowNumber)))
+    getRow(rowIndex) {
+        return new Row(this.cells.filter((cell) => cell.isAtRowIndex(rowIndex)))
     }
 
     getColumns() {

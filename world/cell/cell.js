@@ -1,26 +1,28 @@
 import GridLocation from '../grid/grid-location.js'
 
-export default class BoardCell {
+export default class Cell {
 
     constructor({ 
-        canvasContext, 
-        row, 
-        column, 
+        canvasContext,
+        parent,
+        rowIndex,
+        columnIndex,
         gridOffsetX, 
         gridOffsetY,
         rowHeight,
         columnWidth,
     }) {
         this.canvasContext = canvasContext
-        this.row = row
-        this.column = column
+        this.parent = parent
+        this.rowIndex = rowIndex
+        this.columnIndex = columnIndex
         this.gridOffsetX = gridOffsetX
         this.gridOffsetY = gridOffsetY
         this.rowHeight = rowHeight
         this.columnWidth = columnWidth
         this.letter = null
-        this.xOffset = (this.column * this.columnWidth) + this.gridOffsetX
-        this.yOffset = (this.row * this.rowHeight) + this.gridOffsetY
+        this.xOffset = (this.columnIndex * this.columnWidth) + this.gridOffsetX
+        this.yOffset = (this.rowIndex * this.rowHeight) + this.gridOffsetY
     }
 
     hasLetter() {
@@ -57,32 +59,24 @@ export default class BoardCell {
         return withinX && withinY
     }
 
-    isAtColumn(columnNumber) {
-        return this.column === columnNumber
+    isAtColumnIndex(columnIndex) {
+        return this.columnIndex === columnIndex
     }
 
-    isAtRow(rowNumber) {
-        return this.row === rowNumber
+    isAtRowIndex(rowIndex) {
+        return this.rowIndex === rowIndex
     }
 
     getColumnIndex() {
-        return this.column
+        return this.columnIndex
     }
 
     getRowIndex() {
-        return this.row
-    }
-
-    getGridLocation() {
-        return new GridLocation({
-            x: this.getColumnIndex(),
-            y: this.getRowIndex(),
-            cell: this,
-        })
+        return this.rowIndex
     }
 
     render() {
-        const centerCell = this.column === 7 && this.row === 7
+        const centerCell = this.columnIndex === 7 && this.rowIndex === 7
 
         this.canvasContext.lineWidth = 1
 

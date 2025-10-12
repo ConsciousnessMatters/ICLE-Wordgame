@@ -41,11 +41,6 @@ export default class Line {
         return changingIndicesContinuous
     }
 
-    getProvisionalLettersCellGridLocations() {
-        const provisionalLetters = this.getProvisionalLetters()
-        return provisionalLetters.map((cell) => cell.getGridLocation())
-    }
-
     getWords() {
         const words = []
         let workingWord = []
