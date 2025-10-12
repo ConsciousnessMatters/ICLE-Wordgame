@@ -82,12 +82,12 @@ export default class Cell {
     }
 
     getIntersectingWords() {
-        const columnWord = this.getColumn().getWordAtIndex(this.rowIndex)
         const rowWord = this.getRow().getWordAtIndex(this.columnIndex)
+        const columnWord = this.getColumn().getWordAtIndex(this.rowIndex)
 
         return [
-            columnWord,
             rowWord,
+            columnWord,
         ]
     }
 

@@ -89,10 +89,25 @@ export default class Board extends Grid {
     getNewWordTries() {
         const provisionalLine = this.getProvisionalLine()
         const provisionalLetters = provisionalLine.getProvisionalLetters()
-        const words = provisionalLetters.reduce((accumulator, cell) => [
-            ...accumulator,
-            ...cell.getIntersectingWords(),
-        ], [])
+
+        const uniqueWordIds = new Set()
+        const words = provisionalLetters.reduce((accumulator, cell) => {
+            const intersectingWords = cell.getIntersectingWords()
+
+            const dedupedIntersectingWords = intersectingWords.filter((intersectingWord) => {
+                const placementId = intersectingWord.getPlacementId()
+                if (! uniqueWordIds.has(placementId)) {
+                    uniqueWordIds.add(placementId)
+                    return true
+                }
+                return false
+            })
+
+            return [
+                ...accumulator,
+                ...dedupedIntersectingWords,
+            ]
+        }, [])
 
         // Known good point.
 
