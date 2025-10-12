@@ -43,7 +43,7 @@ export default class BoardCell {
         return this.letter ? this.letter.getType() : null
     }
 
-    isAtLocation({ x, y }) {
+    isAtPixelLocation({ x, y }) {
         const x1 = this.xOffset
         const x2 = this.xOffset + this.columnWidth
         const y1 = this.yOffset

@@ -1,7 +1,7 @@
 export default class Grid {
-    getCellAtLocation({ x, y }) {
+    getCellAtPixelLocation({ x, y }) {
         return this.cells.find((cell) => {
-            return cell.isAtLocation({ x, y })
+            return cell.isAtPixelLocation({ x, y })
         })
     }
 

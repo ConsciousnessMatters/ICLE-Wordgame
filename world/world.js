@@ -34,12 +34,12 @@ export default class World {
         }
 
         this.canvasContext.canvas.addEventListener('pointerdown', (e) => {
-            const boardCell = this.board.getCellAtLocation({
+            const boardCell = this.board.getCellAtPixelLocation({
                 x: e.x,
                 y: e.y,
             })
 
-            const tileRackCell = this.tileRack.getCellAtLocation({
+            const tileRackCell = this.tileRack.getCellAtPixelLocation({
                 x: e.x,
                 y: e.y,
             })
@@ -81,12 +81,12 @@ export default class World {
         })
 
         this.canvasContext.canvas.addEventListener('pointerup', (e) => {
-            const boardCell = this.board.getCellAtLocation({
+            const boardCell = this.board.getCellAtPixelLocation({
                 x: e.x,
                 y: e.y,
             })
 
-            const tileRackCell = this.tileRack.getCellAtLocation({
+            const tileRackCell = this.tileRack.getCellAtPixelLocation({
                 x: e.x,
                 y: e.y,
             })
