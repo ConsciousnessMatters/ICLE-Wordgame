@@ -116,12 +116,34 @@ export default class Board extends Grid {
             ]
         }, [])
 
-        debugger
+        return words
+    }
+
+    areAllWordsValid(words) {
+        return words.length ? words.every((word) => word.dictionaryMatch) : false
+    }
+
+    commitBoardTiles() {
+        this.cells.forEach((cell) => cell.commit())
+    }
+
+    rollbackBoardTiles() {
+        this.cells.forEach((cell) => cell.rollback())
     }
 
     endTurn() {
-        this.isLetterPlacementValid()
-        this.getNewWordTries()
+        const placementValid = this.isLetterPlacementValid()
+        const words = this.getNewWordTries()
+        const areAllWordsValid = this.areAllWordsValid(words)
+
+        if (placementValid && areAllWordsValid) {
+            this.commitBoardTiles()
+            console.debug('Good')
+        } else {
+            this.rollbackBoardTiles()
+            console.debug('Bad')
+        }
+
         console.debug('End Turn')
     }
 }

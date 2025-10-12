@@ -75,7 +75,7 @@ export default class Letter {
     }
 
     getTurnRollBackCell() {
-        return this.turnRollBackCell = cell
+        return this.turnRollBackCell
     }
 
     setTurnRollBackCell(cell) {
@@ -88,6 +88,16 @@ export default class Letter {
 
     hasTurnRollBackCell() {
         return this.turnRollBackCell !== null
+    }
+    
+    commit() {
+        this.clearTurnRollBackCell()
+    }
+
+    rollback(currentCell) {
+        const rollbackCell = this.getTurnRollBackCell()
+        rollbackCell.addLetter(this)
+        currentCell.removeLetter()
     }
 
     render() {

@@ -112,6 +112,7 @@ export default class World {
     setupControls() {
         document.getElementById('end-turn').addEventListener('click', (e) => {
             this.board.endTurn()
+            this.reRender()
         })
     }
 

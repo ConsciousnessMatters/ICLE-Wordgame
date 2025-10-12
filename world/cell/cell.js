@@ -95,6 +95,14 @@ export default class Cell {
         ]
     }
 
+    commit() {
+        if (this.letter) this.letter.commit()
+    }
+
+    rollback() {
+        if (this.letter) this.letter.rollback(this)
+    }
+
     render() {
         const centerCell = this.columnIndex === 7 && this.rowIndex === 7
 
