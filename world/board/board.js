@@ -137,20 +137,21 @@ export default class Board extends Grid {
 
     endTurn() {
         const placementValid = this.isLetterPlacementValid()
-        const words = this.getNewWordTries()
-        const areAllWordsValid = this.areAllWordsValid(words)
-        const score = this.scoreWords(words)
 
-        if (placementValid && areAllWordsValid) {
-            this.commitBoardTiles()
-            console.debug('Good')
+        if (placementValid) {
+            const words = this.getNewWordTries()
+            const areAllWordsValid = this.areAllWordsValid(words)
+            const score = this.scoreWords(words)
+
+            if (areAllWordsValid) {
+                this.commitBoardTiles()
+            } else {
+                this.rollbackBoardTiles()
+            }
+
+            return score
         } else {
-            this.rollbackBoardTiles()
-            console.debug('Bad')
+            return 0
         }
-
-        console.debug('End Turn')
-
-        return score
     }
 }
