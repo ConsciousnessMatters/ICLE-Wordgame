@@ -21,6 +21,7 @@ export default class TileRack extends Grid {
 
             return new Cell({
                 canvasContext: this.canvasContext,
+                board: this,
                 rowIndex,
                 columnIndex,
                 gridOffsetX,

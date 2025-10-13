@@ -27,6 +27,32 @@ export default class Cell {
         return this.letter !== null
     }
 
+    hasLetterAdjacent({ columnOffset, rowOffset }) {
+        const cell = this.getAdjacentCell({ columnOffset, rowOffset })
+
+        if (cell) {
+            return cell.hasLetter()
+        } else {
+            return false
+        }
+    }
+
+    hasLetterAbove() {
+        return this.hasLetterAdjacent({ columnOffset: 0, rowOffset: - 1 })
+    }
+
+    hasLetterBelow() {
+        return this.hasLetterAdjacent({ columnOffset: 0, rowOffset: + 1 })
+    }
+
+    hasLetterToLeft() {
+        return this.hasLetterAdjacent({ columnOffset: - 1, rowOffset: 0 })
+    }
+
+    hasLetterToRight() {
+        return this.hasLetterAdjacent({ columnOffset: + 1, rowOffset: 0 })
+    }
+
     hasProvisionalLetter() {
         return this.hasLetter() && this.letter.hasTurnRollBackCell()
     }
@@ -69,6 +95,24 @@ export default class Cell {
         return this.rowIndex === rowIndex
     }
 
+    isValidColumnIndex(columnIndex) {
+        return columnIndex <= this.board.columns &&
+            columnIndex >= 0
+    }
+
+    isValidRowIndex(rowIndex) {
+        return rowIndex <= this.board.rows &&
+            rowIndex >= 0
+    }
+
+    isStartCell() {
+        return this.columnIndex === 7 && this.rowIndex === 7
+    }
+
+    isContinuityCell() {
+        return 
+    }
+
     getColumnIndex() {
         return this.columnIndex
     }
@@ -83,6 +127,17 @@ export default class Cell {
 
     getRow() {
         return this.board.getRow(this.rowIndex)
+    }
+
+    getAdjacentCell({ columnOffset, rowOffset }) {
+        const columnIndex = this.isValidColumnIndex(this.columnIndex + columnOffset) ? this.columnIndex + columnOffset : null
+        const rowIndex = this.isValidRowIndex(this.rowIndex + rowOffset) ? this.rowIndex + rowOffset : null
+
+        if (rowIndex === null || columnIndex === null) {
+            return null
+        } else {
+            return this.board.getCell({ columnIndex, rowIndex })
+        }
     }
 
     getIntersectingWords() {
@@ -104,11 +159,15 @@ export default class Cell {
     }
 
     render() {
-        const centerCell = this.columnIndex === 7 && this.rowIndex === 7
-
         this.canvasContext.lineWidth = 1
 
-        if (centerCell) {
+        if (this.isStartCell()
+            || this.hasLetter()
+            || this.hasLetterAbove()
+            || this.hasLetterBelow()
+            || this.hasLetterToLeft()
+            || this.hasLetterToRight()
+        ) {
             this.canvasContext.strokeStyle = '#ffffff88'
             this.canvasContext.fillStyle = '#ffffff22';
             this.canvasContext.fillRect(this.xOffset + 1, this.yOffset + 1, this.columnWidth - 2, this.rowHeight - 2);

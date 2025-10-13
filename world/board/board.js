@@ -2,7 +2,6 @@ import Grid from '../grid/grid.js'
 import Cell from '../cell/cell.js'
 import Line, { lineType } from '../grid/line.js'
 import Word from '../grid/word.js'
-import Column from '../grid/column.js'
 import Row from '../grid/row.js'
 
 Line.registerWordClass(Word)
@@ -37,26 +36,6 @@ export default class Board extends Grid {
             })
         })
         this.words = words
-    }
-
-    getColumn(columnIndex) {
-        return new Column(this.cells.filter((cell) => cell.isAtColumnIndex(columnIndex)))
-    }
-
-    getRow(rowIndex) {
-        return new Row(this.cells.filter((cell) => cell.isAtRowIndex(rowIndex)))
-    }
-
-    getColumns() {
-        return Array.from({ length: this.columns }).map((_, column) => {
-            return this.getColumn(column)
-        })
-    }
-
-    getRows() {
-        return Array.from({ length: this.rows }).map((_, row) => {
-            return this.getRow(row)
-        })
     }
 
     getColumnsAndRowsWithProvisionalLetters() {
