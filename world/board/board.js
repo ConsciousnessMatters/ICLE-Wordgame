@@ -151,6 +151,7 @@ export default class Board extends Grid {
 
             return score
         } else {
+            this.rollbackBoardTiles()
             return 0
         }
     }
