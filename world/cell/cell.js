@@ -27,11 +27,15 @@ export default class Cell {
         return this.letter !== null
     }
 
+    hasComittedLetter() {
+        return this.letter !== null && this.letter.isComitted()
+    }
+
     hasLetterAdjacent({ columnOffset, rowOffset }) {
         const cell = this.getAdjacentCell({ columnOffset, rowOffset })
 
         if (cell) {
-            return cell.hasLetter()
+            return cell.hasComittedLetter()
         } else {
             return false
         }
@@ -109,8 +113,12 @@ export default class Cell {
         return this.columnIndex === 7 && this.rowIndex === 7
     }
 
-    isContinuityCell() {
-        return 
+    isGameContinuous() {
+        return this.isStartCell()
+            || this.hasLetterAbove()
+            || this.hasLetterBelow()
+            || this.hasLetterToLeft()
+            || this.hasLetterToRight()
     }
 
     getColumnIndex() {
@@ -161,13 +169,7 @@ export default class Cell {
     render() {
         this.canvasContext.lineWidth = 1
 
-        if (this.isStartCell()
-            || this.hasLetter()
-            || this.hasLetterAbove()
-            || this.hasLetterBelow()
-            || this.hasLetterToLeft()
-            || this.hasLetterToRight()
-        ) {
+        if (this.isStartCell()) {
             this.canvasContext.strokeStyle = '#ffffff88'
             this.canvasContext.fillStyle = '#ffffff22';
             this.canvasContext.fillRect(this.xOffset + 1, this.yOffset + 1, this.columnWidth - 2, this.rowHeight - 2);

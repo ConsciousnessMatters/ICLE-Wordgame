@@ -78,6 +78,10 @@ export default class Letter {
         return this.turnRollBackCell
     }
 
+    isComitted() {
+        return this.turnRollBackCell === null
+    }
+
     setTurnRollBackCell(cell) {
         this.turnRollBackCell = cell
     }

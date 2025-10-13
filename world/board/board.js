@@ -61,8 +61,9 @@ export default class Board extends Grid {
             (columnsWithProvisionalLetters.length !== 0 && rowsWithProvisionalLetters.length !== 0)
         const provisionalLine = this.getProvisionalLine()
         const isLineContinuous = isLine && provisionalLine.areProvisionalLettersContinuous()
+        const isGameContinuous = isLine && provisionalLine.areProvisionalLettersGameContinuous()
 
-        return areLettersPlaced && isLine && isLineContinuous
+        return areLettersPlaced && isLine && isLineContinuous && isGameContinuous
     }
 
     getNewWordTries() {

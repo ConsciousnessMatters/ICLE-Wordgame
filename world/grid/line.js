@@ -27,6 +27,11 @@ export default class Line {
         return this.cells.filter((cell) => cell.hasProvisionalLetter())
     }
 
+    getWordFromProvisionalLetters() {
+        const firstProvisionalLetterIndex = this.cells.findIndex((cell) => cell.hasProvisionalLetter())
+        return this.getWordAtIndex(firstProvisionalLetterIndex)
+    }
+
     containsProvisionalLetters() {
         return this.getProvisionalLetters().length !== 0
     }
@@ -40,8 +45,8 @@ export default class Line {
     }
 
     areProvisionalLettersContinuous() {
-        const rowIndices = this.getProvisionalLetters().map((cell) => cell.getRowIndex())
-        const columnIndices = this.getProvisionalLetters().map((cell) => cell.getColumnIndex())
+        const rowIndices = this.getWordFromProvisionalLetters().toArray().map((cell) => cell.getRowIndex())
+        const columnIndices = this.getWordFromProvisionalLetters().toArray().map((cell) => cell.getColumnIndex())
 
         if (rowIndices.length === 0 || columnIndices.length === 0) {
             throw new Error('Unable to check if provisional letters are continuous if there are none.')
@@ -51,6 +56,10 @@ export default class Line {
         const changingIndicesContinuous = changingIndices.every((value, index, array) => index === 0 || value === array[index - 1] + 1)
 
         return changingIndicesContinuous
+    }
+
+    areProvisionalLettersGameContinuous() {
+        return this.getProvisionalLetters().some((cell) => cell.isGameContinuous())
     }
 
     getWords() {
@@ -94,5 +103,9 @@ export default class Line {
         } else {
             return this.cells.some((cell) => cell.getRowIndex() === lineIndex)
         }
+    }
+
+    toArray() {
+        return this.cells
     }
 }
