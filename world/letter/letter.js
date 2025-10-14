@@ -99,10 +99,9 @@ export default class Letter {
     }
 
     rollback(currentCell) {
-        const rollbackCell = this.getTurnRollBackCell()
-
-        if (rollbackCell) {
-            rollbackCell.addLetter(this)
+        if (this.turnRollBackCell) {
+            this.turnRollBackCell.addLetter(this)
+            this.clearTurnRollBackCell()
             currentCell.removeLetter()
         }
     }
