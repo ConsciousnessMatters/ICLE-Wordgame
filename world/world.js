@@ -42,7 +42,7 @@ export default class World {
             }
         }
 
-        const updateMovingLetter = () => {
+        const updateMovingLetter = (e) => {
             if (movingLetter) {
                 movingLetter.setLocation({
                     x: e.x,
@@ -82,7 +82,7 @@ export default class World {
         const handlePointerMove = (e) => {
             if (movingLetter) {
                 this.reRender()
-                updateMovingLetter()
+                updateMovingLetter(e)
             }
         }
 
