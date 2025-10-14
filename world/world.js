@@ -42,7 +42,18 @@ export default class World {
             }
         }
 
-        this.canvasContext.canvas.addEventListener('pointerdown', (e) => {
+        const updateMovingLetter = () => {
+            if (movingLetter) {
+                movingLetter.setLocation({
+                    x: e.x,
+                    y: e.y,
+                    origin: 'center',
+                })
+                movingLetter.render()
+            }
+        }
+
+        const handleClickDown = (e) => {
             const boardCell = this.board.getCellAtPixelLocation({
                 x: e.x,
                 y: e.y,
@@ -65,31 +76,17 @@ export default class World {
             }
 
             this.reRender()
+            updateMovingLetter()
+        }
 
-            if (movingLetter) {
-                movingLetter.setLocation({
-                    x: e.x,
-                    y: e.y,
-                    origin: 'center',
-                })
-                movingLetter.render()
-            }
-        })
-
-        this.canvasContext.canvas.addEventListener('pointermove', (e) => {
+        const handlePointerMove = (e) => {
             if (movingLetter) {
                 this.reRender()
-
-                movingLetter.setLocation({
-                    x: e.x,
-                    y: e.y,
-                    origin: 'center',
-                })
-                movingLetter.render()
+                updateMovingLetter()
             }
-        })
+        }
 
-        this.canvasContext.canvas.addEventListener('pointerup', (e) => {
+        const handleClickUp = (e) => {
             const boardCell = this.board.getCellAtPixelLocation({
                 x: e.x,
                 y: e.y,
@@ -114,15 +111,13 @@ export default class World {
             }
 
             cancelDrag()
-        })
-        
-        this.canvasContext.canvas.addEventListener('pointercancel', (e) => {
-            cancelDrag()
-        })
+        }
 
-        this.canvasContext.canvas.addEventListener('pointerout', (e) => {
-            cancelDrag()
-        })
+        this.canvasContext.canvas.addEventListener('pointerdown', handleClickDown)
+        this.canvasContext.canvas.addEventListener('pointermove', handlePointerMove)
+        this.canvasContext.canvas.addEventListener('pointerup', handleClickUp)
+        this.canvasContext.canvas.addEventListener('pointercancel', cancelDrag)
+        this.canvasContext.canvas.addEventListener('pointerout', cancelDrag)
     }
 
     setupControls() {
