@@ -76,7 +76,8 @@ export default class Cell {
     }
 
     getLetterValue() {
-        return this.letter ? this.letter.getValue() : null
+        const cellMultiplier = this.isQuadLetterCell() ? 4 : 1
+        return this.letter ? (this.letter.getValue() * cellMultiplier) : null
     }
 
     isAtPixelLocation({ x, y }) {
@@ -145,6 +146,19 @@ export default class Cell {
             '10x11',
             '9x12',
             '7x7',
+        ].includes(`${this.columnIndex}x${this.rowIndex}`)
+    }
+
+    isQuadLetterCell() {
+        return [
+            '5x6',
+            '6x5',
+            '8x5',
+            '9x6',
+            '5x8',
+            '6x9',
+            '8x9',
+            '9x8',
         ].includes(`${this.columnIndex}x${this.rowIndex}`)
     }
 
@@ -217,6 +231,11 @@ export default class Cell {
         } else if (this.isDoubleWordCell()) {
             this.canvasContext.strokeStyle = '#00880088'
             this.canvasContext.fillStyle = '#00880044'
+            this.canvasContext.fillRect(this.xOffset + 1, this.yOffset + 1, this.columnWidth - 2, this.rowHeight - 2)
+            this.canvasContext.strokeRect(this.xOffset + 1, this.yOffset + 1, this.columnWidth - 2, this.rowHeight - 2)
+        } else if (this.isQuadLetterCell()) {
+            this.canvasContext.strokeStyle = '#ff00ff88'
+            this.canvasContext.fillStyle = '#ff00ff22'
             this.canvasContext.fillRect(this.xOffset + 1, this.yOffset + 1, this.columnWidth - 2, this.rowHeight - 2)
             this.canvasContext.strokeRect(this.xOffset + 1, this.yOffset + 1, this.columnWidth - 2, this.rowHeight - 2)
         } else {

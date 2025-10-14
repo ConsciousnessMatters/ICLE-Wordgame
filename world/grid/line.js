@@ -67,20 +67,24 @@ export default class Line {
         const Word = this.constructor.Word
         let workingWord = []
 
+        const pushNewWord = () => {
+            words.push(new Word({
+                cells: workingWord,
+                lineType: this.isRow() ? lineType.ROW : lineType.COLUMN
+            }))
+            workingWord = []
+        }
+
         for (const cell of this.cells) {
             if (cell.hasLetter()) {
                 workingWord.push(cell)
             } else if (workingWord.length) {
-                words.push(new Word({
-                    cells: workingWord,
-                    lineType: this.isRow() ? lineType.ROW : lineType.COLUMN
-                }))
-                workingWord = []
+                pushNewWord()
             }
         }
 
         if (workingWord.length) {
-            words.push(workingWord)
+            pushNewWord()
         }
 
         return words
