@@ -32,7 +32,12 @@ export default class Word extends Line {
     }
 
     calculateScore() {
-        const score = this.cells.reduce((accumulator, cell) => accumulator + cell.getLetterValue(), 0)
+        const letterScore = this.cells.reduce((accumulator, cell) => accumulator + cell.getLetterValue(), 0)
+        const doubleWordBonuses = this.cells.filter((cell) => cell.isDoubleWordCell() && cell.hasProvisionalLetter()).length * 2
+        const quadWordBonuses = this.cells.filter((cell) => cell.isQuadWordCell() && cell.hasProvisionalLetter()).length * 4
+        const fullMultiplier = Math.max(doubleWordBonuses, 1) * Math.max(quadWordBonuses, 1)
+        const score = letterScore * fullMultiplier
+
         return this.isDictionaryMatch() ? score : 0
     }
 

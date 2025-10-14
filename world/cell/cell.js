@@ -113,6 +113,41 @@ export default class Cell {
         return this.columnIndex === 7 && this.rowIndex === 7
     }
 
+    isQuadWordCell() {
+        return [
+            '0x0',
+            '7x0',
+            '14x0',
+            '0x7',
+            '14x7',
+            '0x14',
+            '7x14',
+            '14x14',
+        ].includes(`${this.columnIndex}x${this.rowIndex}`)
+    }
+
+    isDoubleWordCell() {
+        return [
+            '2x5',
+            '3x4',
+            '4x3',
+            '5x2',
+            '2x9',
+            '3x10',
+            '4x11',
+            '5x12',
+            '12x5',
+            '11x4',
+            '10x3',
+            '9x2',
+            '12x9',
+            '11x10',
+            '10x11',
+            '9x12',
+            '7x7',
+        ].includes(`${this.columnIndex}x${this.rowIndex}`)
+    }
+
     isGameContinuous() {
         return this.isStartCell()
             || this.hasLetterAbove()
@@ -171,8 +206,18 @@ export default class Cell {
 
         if (this.isStartCell()) {
             this.canvasContext.strokeStyle = '#ffffff88'
-            this.canvasContext.fillStyle = '#ffffff22';
-            this.canvasContext.fillRect(this.xOffset + 1, this.yOffset + 1, this.columnWidth - 2, this.rowHeight - 2);
+            this.canvasContext.fillStyle = '#ffffff22'
+            this.canvasContext.fillRect(this.xOffset + 1, this.yOffset + 1, this.columnWidth - 2, this.rowHeight - 2)
+            this.canvasContext.strokeRect(this.xOffset + 1, this.yOffset + 1, this.columnWidth - 2, this.rowHeight - 2)
+        } else if (this.isQuadWordCell()) {
+            this.canvasContext.strokeStyle = '#00ff0088'
+            this.canvasContext.fillStyle = '#00ff0044'
+            this.canvasContext.fillRect(this.xOffset + 1, this.yOffset + 1, this.columnWidth - 2, this.rowHeight - 2)
+            this.canvasContext.strokeRect(this.xOffset + 1, this.yOffset + 1, this.columnWidth - 2, this.rowHeight - 2)
+        } else if (this.isDoubleWordCell()) {
+            this.canvasContext.strokeStyle = '#00880088'
+            this.canvasContext.fillStyle = '#00880044'
+            this.canvasContext.fillRect(this.xOffset + 1, this.yOffset + 1, this.columnWidth - 2, this.rowHeight - 2)
             this.canvasContext.strokeRect(this.xOffset + 1, this.yOffset + 1, this.columnWidth - 2, this.rowHeight - 2)
         } else {
             this.canvasContext.strokeStyle = '#ffffff44'
