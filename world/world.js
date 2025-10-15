@@ -1,16 +1,19 @@
 import Board from './board/board.js'
 import TileRack from './tile-rack/tile-rack.js'
 import LettersBag from './letters-bag/letters-bag.js'
+import Naive from '../naive/naive.js'
 
 export default class World {
     turn = 1
     scores = []
+    players = []
 
     constructor({ canvasContext, words, scoreUpdateFunction }) {
         this.canvasContext = canvasContext
         this.board = new Board({ canvasContext, words })
         this.tileRack = new TileRack({ canvasContext })
         this.lettersBag = new LettersBag({ canvasContext })
+        this.naive = new Naive({ world: this })
         this.words = words
         this.scoreUpdateFunction = scoreUpdateFunction
 
@@ -76,7 +79,7 @@ export default class World {
             }
 
             this.reRender()
-            updateMovingLetter()
+            updateMovingLetter(e)
         }
 
         const handlePointerMove = (e) => {
@@ -120,8 +123,14 @@ export default class World {
         this.canvasContext.canvas.addEventListener('pointerout', cancelDrag)
     }
 
+    moveLetter(oldCell, newCell) {
+        const movingLetter = oldCell.removeLetter()
+        movingLetter.setTurnRollBackCell(oldCell)
+        newCell.addLetter(movingLetter)
+    }
+
     setupControls() {
-        document.getElementById('end-turn').addEventListener('click', (e) => {
+        const endTurn = (e) => {
             const newScore = this.board.endTurn()
             this.scores.push(newScore)
             this.refreshTileRacks()
@@ -132,7 +141,14 @@ export default class World {
             })
             this.reRender()
             this.turn++
-        })
+        }
+
+        const forceComputerTurn = (e) => {
+            this.naive.takeTurn()
+        }
+
+        document.getElementById('end-turn').addEventListener('click', endTurn)
+        document.getElementById('force-computer-turn').addEventListener('click', forceComputerTurn)
     }
 
     clear() {
