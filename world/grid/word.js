@@ -40,8 +40,4 @@ export default class Word extends Line {
 
         return this.isDictionaryMatch() ? score : 0
     }
-
-    toText() {
-        return this.cells.reduce((accumulator, cell) => accumulator + cell.getLetterType(), '')
-    }
 }

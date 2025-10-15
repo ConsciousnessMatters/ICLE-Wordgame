@@ -112,4 +112,8 @@ export default class Line {
     toArray() {
         return this.cells
     }
+
+    toText() {
+        return this.cells.reduce((accumulator, cell) => accumulator + (cell.getLetterType() ?? '_'), '')
+    }
 }
