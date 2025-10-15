@@ -11,8 +11,6 @@ export default class Naive {
 
         const [ startingOption ] = startingOptions
         this.processStartingOption(startingOption)
-
-        debugger
     }
 
     processStartingOption(startingOption) {
@@ -52,39 +50,78 @@ export default class Naive {
 
     attemptPlay({ column, playableSpaces, tileRackCells, startingIndex, playLength, offset }) {
         const attemptSpaces = playableSpaces.slice(startingIndex)
+        
+        let combinations = 0
+        let permutations = 0
+        let words = 0
 
+        // ToDo: Needs careful engineering here, I want to iterate placement for each permutation, so this needs reconsidering
         if (attemptSpaces.length < playLength) {
             return false
         }
         
         for (const combination of this.yieldCombination(tileRackCells)) {
+            combinations++
+
             const text = combination.reduce((accumulator, cell) => accumulator + cell.getLetterType(), '')
             console.debug(text)
 
             // ToDo: Anagram checking of combination + existing placed letters could optimize things here.
 
-            for (const permutation of this.yieldPermutations(combination)) {
+            for (const permutation of this.yieldPermutation(combination)) {
+                permutations++
+
                 const text = permutation.reduce((accumulator, cell) => accumulator + cell.getLetterType(), '')
+
+                attemptSpaces.some((attemptSpace) => {
+                    const tileRackCell = permutation.shift()
+                    if (tileRackCell) {
+                        this.world.moveLetter(tileRackCell, attemptSpace)
+                    }
+                    return tileRackCell ? false : true
+                })
+
+                // this.world.reRender()
+
+                const word = column.getWordAtIndex(startingIndex)
+                const dictionaryMatch = word.isDictionaryMatch()
+
+                if (dictionaryMatch) {
+                    this.world.reRender()
+                    debugger
+                    this.world.board.rollbackBoardTiles()
+                    // this.world.reRender()
+                    words++
+                }
+
+                this.world.board.rollbackBoardTiles()
+                // this.world.reRender()
                 console.debug(`- ${text}`)
             }
         }
+
+        console.debug({
+            combinations,
+            permutations,
+            words,
+        })
     }
 
     *yieldCombination(array) {
         const totalCombinations = (1 << array.length)
-        for (let combinationIndex = 0; combinationIndex < totalCombinations; combinationIndex++) {
+        for (let combinationIndex = 1; combinationIndex < totalCombinations; combinationIndex++) {
             yield array.filter((_, i) => combinationIndex & (1 << i))
         }
     }
 
-    *yieldPermutations(array) {
+    *yieldPermutation(array) {
         if (array.length === 0) {
             yield []
         } else {
             for (let i = 0; i < array.length; i++) {
-                const rest = [...array.slice(0,i), ...array.slice(i+1)]
-                for (const p of this.yieldPermutations(rest)) {
-                    yield [array[i], ...p]
+                const rest = [...array.slice(0, i), ...array.slice(i + 1)]
+                for (const permutation of this.yieldPermutation(rest)) {
+                    yield [array[i], ...permutation]
                 }
             }
         }
