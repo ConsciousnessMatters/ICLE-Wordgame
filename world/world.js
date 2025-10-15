@@ -145,6 +145,15 @@ export default class World {
 
         const forceComputerTurn = (e) => {
             this.naive.takeTurn()
+            const newScore = this.board.endTurn()
+            this.refreshTileRacks()
+            this.scoreUpdateFunction({
+                turnNumber: this.turn,
+                wordPoints: newScore,
+                totalPoints: this.scores.reduce((accumulator, score) => accumulator + score, 0),
+            })
+            this.reRender()
+            this.turn++
         }
 
         document.getElementById('end-turn').addEventListener('click', endTurn)

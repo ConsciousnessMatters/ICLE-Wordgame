@@ -116,6 +116,7 @@ export default class Board extends Grid {
     }
 
     endTurn() {
+        console.debug('End Turn')
         const placementValid = this.isLetterPlacementValid()
 
         if (placementValid) {

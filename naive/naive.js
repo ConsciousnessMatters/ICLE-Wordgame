@@ -1,6 +1,8 @@
+import Option from './option.js'
+
 export default class Naive {
     world = null
-    optionSpace = null
+    optionSpace = []
 
     constructor({ world }) {
         this.world = world
@@ -8,45 +10,36 @@ export default class Naive {
 
     takeTurn() {
         const startingOptions = this.world.board.cells.filter((cell) => cell.isGameContinuous())
+        startingOptions.forEach((startingOption) => this.evaluateStartingOption(startingOption))
 
-        const [ startingOption ] = startingOptions
-        this.processStartingOption(startingOption)
+        this.playBestOption()
     }
 
-    processStartingOption(startingOption) {
-        const columnPlay = this.processVerticalPlay(startingOption)
-    }
-
-    processVerticalPlay(startingOption) {
+    evaluateStartingOption(startingOption) {
         const column = startingOption.getColumn()
-        const playableSpaces = column.toArray().filter((cell) => !cell.hasLetter())
+        const columnPlayableSpaces = column.toArray().filter((cell) => !cell.hasLetter())
+        const columnStartingOptionIndex = columnPlayableSpaces.findIndex((cell) => cell === startingOption)
+        const row = startingOption.getRow()
+        const rowPlayableSpaces = row.toArray().filter((cell) => !cell.hasLetter())
+        const rowStartingOptionIndex = rowPlayableSpaces.findIndex((cell) => cell === startingOption)
         const tileRackCells = this.world.tileRack.cells.filter((cell) => cell.hasLetter())
 
-        // this.world.moveLetter(firstTileRackCell, firstPlayableSpace)
-
-        const startingOptionIndex = playableSpaces.findIndex((cell) => cell === startingOption)
-
-        this.attemptPlay({
-            column,
-            playableSpaces,
+        this.evaluateLine({
+            line: column,
+            playableSpaces: columnPlayableSpaces,
             tileRackCells,
-            startingIndex: startingOptionIndex,
+            startingIndex: columnStartingOptionIndex,
         })
 
-        const scoreIfValid = this.calculateScoreIfPlayValid()
-
-        if (scoreIfValid !== false) {
-            // Record possible option to state.
-        }
-
-        this.world.reRender()
-
-        debugger
-
-        this.world.board.rollbackBoardTiles()
+        this.evaluateLine({
+            line: row,
+            playableSpaces: rowPlayableSpaces,
+            tileRackCells,
+            startingIndex: rowStartingOptionIndex,
+        })
     }
 
-    attemptPlay({ column, playableSpaces, tileRackCells, startingIndex }) {
+    evaluateLine({ line, playableSpaces, tileRackCells, startingIndex }) {
         let combinations = 0
         let permutations = 0
         let words = 0
@@ -68,11 +61,13 @@ export default class Naive {
 
                 for (const attemptSpaces of this.yieldPlacement(combination, playableSpaces, startingIndex)) {
                     const permutationPlacementAttempt = permutation.slice()
+                    const attemptedMoves = []
                     // const text = permutation.reduce((accumulator, cell) => accumulator + cell.getLetterType(), '')
 
                     attemptSpaces.some((attemptSpace) => {
                         const tileRackCell = permutationPlacementAttempt.shift()
                         if (tileRackCell) {
+                            attemptedMoves.push({ tileRackCell, attemptSpace })
                             this.world.moveLetter(tileRackCell, attemptSpace)
                         }
                         return tileRackCell ? false : true
@@ -80,28 +75,26 @@ export default class Naive {
 
                     // this.world.reRender()
 
-                    const word = column.getWordAtIndex(startingIndex)
+                    const word = line.getWordAtIndex(startingIndex)
 
                     if (! word) {
                         // debugger
                         // ToDo: This shouldn't fire as often as it did before I commented it out.
                     }
 
-                    if (word) {
-                        const dictionaryMatch = word.isDictionaryMatch()
+                    if (word && word.isDictionaryMatch()) {
+                        this.world.reRender()
+                        // debugger
+                        // this.world.reRender()
+                        words++
 
-                        if (dictionaryMatch) {
-                            this.world.reRender()
-                            debugger
-                            this.world.board.rollbackBoardTiles()
-                            // this.world.reRender()
-                            words++
-                        }
+                        this.addOption({
+                            moves: attemptedMoves, 
+                            score: this.calculateScoreIfPlayValid(),
+                        })
                     }
 
                     this.world.board.rollbackBoardTiles()
-                    // this.world.reRender()
-                    // console.debug(`- ${text}`)
                 }
             }
         }
@@ -111,6 +104,9 @@ export default class Naive {
             permutations,
             words,
         })
+
+        const bestOption = this.getBestOption()
+        debugger
     }
 
     *yieldCombination(array) {
@@ -166,5 +162,28 @@ export default class Naive {
         } else {
             return false
         }
+    }
+
+    addOption({ moves, score }) {
+        this.optionSpace.push(new Option({
+            moves,
+            score,
+        }))
+    }
+
+    getBestOption() {
+        return this.optionSpace.length
+            ? this.optionSpace.reduce((accumulator, option) => (option.score > accumulator.score ? option : accumulator))
+            : null
+    }
+
+    playOption(option) {
+        option.moves.forEach((move) => this.world.moveLetter(move.tileRackCell, move.attemptSpace))
+    }
+
+    playBestOption() {
+        const bestOption = this.getBestOption()
+        this.playOption(bestOption)
+        // debugger
     }
 }
