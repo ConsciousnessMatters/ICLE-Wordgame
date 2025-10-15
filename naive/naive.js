@@ -31,8 +31,6 @@ export default class Naive {
             playableSpaces,
             tileRackCells,
             startingIndex: startingOptionIndex,
-            playLength: 3,
-            offset: 0,
         })
 
         const scoreIfValid = this.calculateScoreIfPlayValid()
@@ -48,55 +46,63 @@ export default class Naive {
         this.world.board.rollbackBoardTiles()
     }
 
-    attemptPlay({ column, playableSpaces, tileRackCells, startingIndex, playLength, offset }) {
-        const attemptSpaces = playableSpaces.slice(startingIndex)
-        
+    attemptPlay({ column, playableSpaces, tileRackCells, startingIndex }) {
         let combinations = 0
         let permutations = 0
         let words = 0
 
-        // ToDo: Needs careful engineering here, I want to iterate placement for each permutation, so this needs reconsidering
-        if (attemptSpaces.length < playLength) {
-            return false
-        }
-        
         for (const combination of this.yieldCombination(tileRackCells)) {
             combinations++
 
-            const text = combination.reduce((accumulator, cell) => accumulator + cell.getLetterType(), '')
-            console.debug(text)
-
             // ToDo: Anagram checking of combination + existing placed letters could optimize things here.
+            // ToDo: Playlength checking of combination to available space, no point in permutating if it doesn't fit.
+
+            // if (combination.length > attemptSpaces.length) {
+            //     continue
+            // }
+
+            // ToDo: Right cap play guard! Don't overflow the board.
 
             for (const permutation of this.yieldPermutation(combination)) {
                 permutations++
 
-                const text = permutation.reduce((accumulator, cell) => accumulator + cell.getLetterType(), '')
+                for (const attemptSpaces of this.yieldPlacement(combination, playableSpaces, startingIndex)) {
+                    const permutationPlacementAttempt = permutation.slice()
+                    // const text = permutation.reduce((accumulator, cell) => accumulator + cell.getLetterType(), '')
 
-                attemptSpaces.some((attemptSpace) => {
-                    const tileRackCell = permutation.shift()
-                    if (tileRackCell) {
-                        this.world.moveLetter(tileRackCell, attemptSpace)
+                    attemptSpaces.some((attemptSpace) => {
+                        const tileRackCell = permutationPlacementAttempt.shift()
+                        if (tileRackCell) {
+                            this.world.moveLetter(tileRackCell, attemptSpace)
+                        }
+                        return tileRackCell ? false : true
+                    })
+
+                    // this.world.reRender()
+
+                    const word = column.getWordAtIndex(startingIndex)
+
+                    if (! word) {
+                        // debugger
+                        // ToDo: This shouldn't fire as often as it did before I commented it out.
                     }
-                    return tileRackCell ? false : true
-                })
 
-                // this.world.reRender()
+                    if (word) {
+                        const dictionaryMatch = word.isDictionaryMatch()
 
-                const word = column.getWordAtIndex(startingIndex)
-                const dictionaryMatch = word.isDictionaryMatch()
+                        if (dictionaryMatch) {
+                            this.world.reRender()
+                            debugger
+                            this.world.board.rollbackBoardTiles()
+                            // this.world.reRender()
+                            words++
+                        }
+                    }
 
-                if (dictionaryMatch) {
-                    this.world.reRender()
-                    debugger
                     this.world.board.rollbackBoardTiles()
                     // this.world.reRender()
-                    words++
+                    // console.debug(`- ${text}`)
                 }
-
-                this.world.board.rollbackBoardTiles()
-                // this.world.reRender()
-                console.debug(`- ${text}`)
             }
         }
 
@@ -123,6 +129,24 @@ export default class Naive {
                 for (const permutation of this.yieldPermutation(rest)) {
                     yield [array[i], ...permutation]
                 }
+            }
+        }
+    }
+
+    *yieldPlacement(provisionalWord, playableSpaces, startingIndex) {
+        const maxCombinationOffset = provisionalWord.length - 1
+        const maxPlayableOffset = playableSpaces.slice(0, startingIndex).length
+        const maxOperatingOffset = Math.min(maxCombinationOffset, maxPlayableOffset)
+        const newStartingIndex = startingIndex - maxOperatingOffset
+
+        if (newStartingIndex < 0) {
+            debugger
+        }
+
+        for (let i = newStartingIndex; i < playableSpaces.length; i++) {
+            const attemptSpaces = playableSpaces.slice(i)
+            if (attemptSpaces.length >= provisionalWord.length) {
+                yield attemptSpaces
             }
         }
     }
