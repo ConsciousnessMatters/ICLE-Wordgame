@@ -13,6 +13,7 @@ export default class Naive {
         startingOptions.forEach((startingOption) => this.evaluateStartingOption(startingOption))
 
         this.playBestOption()
+        this.cleanupOptionSpace()
     }
 
     evaluateStartingOption(startingOption) {
@@ -179,6 +180,10 @@ export default class Naive {
 
     playOption(option) {
         option.moves.forEach((move) => this.world.moveLetter(move.tileRackCell, move.attemptSpace))
+    }
+
+    cleanupOptionSpace() {
+        this.optionSpace = []
     }
 
     playBestOption() {
