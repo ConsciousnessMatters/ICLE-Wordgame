@@ -146,6 +146,7 @@ export default class World {
         const forceComputerTurn = (e) => {
             this.naive.takeTurn()
             const newScore = this.board.endTurn()
+            this.scores.push(newScore)
             this.refreshTileRacks()
             this.scoreUpdateFunction({
                 turnNumber: this.turn,
