@@ -24,14 +24,12 @@ export default class Naive {
         const playableSpaces = column.toArray().filter((cell) => !cell.hasLetter())
         const tileRackCells = this.world.tileRack.cells.filter((cell) => cell.hasLetter())
 
-        const [ firstTileRackCell ] = tileRackCells
-        const [ firstPlayableSpace ] = playableSpaces
-
-        this.world.moveLetter(firstTileRackCell, firstPlayableSpace)
+        // this.world.moveLetter(firstTileRackCell, firstPlayableSpace)
 
         const startingOptionIndex = playableSpaces.findIndex((cell) => cell === startingOption)
 
         this.attemptPlay({
+            column,
             playableSpaces,
             tileRackCells,
             startingIndex: startingOptionIndex,
@@ -52,17 +50,23 @@ export default class Naive {
         this.world.board.rollbackBoardTiles()
     }
 
-    attemptPlay({ playableSpaces, tileRackCells, startingIndex, playLength, offset }) {
+    attemptPlay({ column, playableSpaces, tileRackCells, startingIndex, playLength, offset }) {
         const attemptSpaces = playableSpaces.slice(startingIndex)
-        const simplifiedTileRackCells = tileRackCells.slice(4)
 
         if (attemptSpaces.length < playLength) {
             return false
         }
         
-        for (const combination of this.yieldCombination(simplifiedTileRackCells)) {
+        for (const combination of this.yieldCombination(tileRackCells)) {
             const text = combination.reduce((accumulator, cell) => accumulator + cell.getLetterType(), '')
             console.debug(text)
+
+            // ToDo: Anagram checking of combination + existing placed letters could optimize things here.
+
+            for (const permutation of this.yieldPermutations(combination)) {
+                const text = permutation.reduce((accumulator, cell) => accumulator + cell.getLetterType(), '')
+                console.debug(`- ${text}`)
+            }
         }
     }
 
@@ -70,6 +74,19 @@ export default class Naive {
         const totalCombinations = (1 << array.length)
         for (let combinationIndex = 0; combinationIndex < totalCombinations; combinationIndex++) {
             yield array.filter((_, i) => combinationIndex & (1 << i))
+        }
+    }
+
+    *yieldPermutations(array) {
+        if (array.length === 0) {
+            yield []
+        } else {
+            for (let i = 0; i < array.length; i++) {
+                const rest = [...array.slice(0,i), ...array.slice(i+1)]
+                for (const p of this.yieldPermutations(rest)) {
+                    yield [array[i], ...p]
+                }
+            }
         }
     }
 
