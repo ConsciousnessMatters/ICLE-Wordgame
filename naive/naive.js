@@ -3,12 +3,16 @@ import Option from './option.js'
 export default class Naive {
     world = null
     optionSpace = []
+    combinations = 0
+    permutations = 0
+    placements = 0
 
     constructor({ world }) {
         this.world = world
     }
 
     takeTurn() {
+        const start = performance.now()
         const startingOptions = this.world.board.cells.filter((cell) => cell.isGameContinuous())
         const linesForEvaluation = startingOptions.reduce((accumulator,  startingOption) => {
             const lineKeysSoFar = accumulator.map((line) => line.getKey())
@@ -26,10 +30,20 @@ export default class Naive {
             return accumulator
         }, [])
 
-        debugger
+        
+
 
 
         startingOptions.forEach((startingOption) => this.evaluateStartingOption(startingOption))
+
+        const end = performance.now()
+        console.log({
+            naiveTurnTime: `${((end - start) / 1000).toFixed(2)} s`,
+            combinations: this.combinations,
+            permutations: this.permutations,
+            placements: this.placements,
+            options: this.optionSpace.length
+        })
 
         this.playBestOption()
         this.cleanupOptionSpace()
@@ -59,13 +73,13 @@ export default class Naive {
         })
     }
 
-    evaluateLine({ line, playableSpaces, tileRackCells, startingIndex }) {
-        let combinations = 0
-        let permutations = 0
-        let words = 0
+    evaluateLine({ line, playableSpaces = null, tileRackCells, startingIndex = 0 }) {
+        if (playableSpaces === null) {
+            playableSpaces = line.toArray().filter((cell) => !cell.hasLetter())
+        }
 
         for (const combination of this.yieldCombination(tileRackCells)) {
-            combinations++
+            this.combinations++
 
             // ToDo: Anagram checking of combination + existing placed letters could optimize things here.
             // ToDo: Playlength checking of combination to available space, no point in permutating if it doesn't fit.
@@ -84,9 +98,11 @@ export default class Naive {
             }
 
             for (const permutation of this.yieldPermutation(combination)) {
-                permutations++
+                this.permutations++
 
                 for (const attemptSpaces of this.yieldPlacement(permutation, playableSpaces, startingIndex)) {
+                    this.placements++
+
                     const permutationPlacementAttempt = permutation.slice()
                     const attemptedMoves = []
                     // const text = permutation.reduce((accumulator, cell) => accumulator + cell.getLetterType(), '')
@@ -110,10 +126,6 @@ export default class Naive {
                     }
 
                     if (word && word.isDictionaryMatch()) {
-                        // debugger
-                        // this.world.reRender()
-                        words++
-
                         this.addOption({
                             moves: attemptedMoves, 
                             score: this.calculateScoreIfPlayValid(),
@@ -207,6 +219,9 @@ export default class Naive {
 
     cleanupOptionSpace() {
         this.optionSpace = []
+        this.combinations = 0
+        this.permutations = 0
+        this.placements = 0
     }
 
     playBestOption() {
