@@ -106,15 +106,6 @@ export default class Naive {
                 }
             }
         }
-
-        console.debug({
-            combinations,
-            permutations,
-            words,
-        })
-
-        const bestOption = this.getBestOption()
-        debugger
     }
 
     *yieldCombination(array) {
@@ -174,10 +165,16 @@ export default class Naive {
     }
 
     addOption({ moves, score }) {
-        this.optionSpace.push(new Option({
+        const newOption = new Option({
             moves,
             score,
-        }))
+        })
+        const newOptionKey = newOption.getKey()
+
+        if (! this.optionSpace.includes((option) => option.getKey() === newOptionKey)) {
+            this.optionSpace.push(newOption)
+            // debugger
+        }
     }
 
     getBestOption() {

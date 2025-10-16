@@ -186,6 +186,10 @@ export default class Cell {
         return this.board.getRow(this.rowIndex)
     }
 
+    getCellLocationKey() {
+        return `${this.columnIndex}x${this.rowIndex}`
+    }
+
     getAdjacentCell({ columnOffset, rowOffset }) {
         const columnIndex = this.isValidColumnIndex(this.columnIndex + columnOffset) ? this.columnIndex + columnOffset : null
         const rowIndex = this.isValidRowIndex(this.rowIndex + rowOffset) ? this.rowIndex + rowOffset : null
