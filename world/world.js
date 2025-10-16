@@ -18,7 +18,7 @@ export default class World {
 
     constructor({ canvasContext, words, scoreUpdateFunction }) {
         this.canvasContext = canvasContext
-        this.board = new Board({ canvasContext, words })
+        this.board = new Board({ canvasContext, words, world: this })
         this.tileRack = new TileRack({ canvasContext })
         this.lettersBag = new LettersBag({ canvasContext })
         this.naive = new Naive({ world: this })

@@ -12,8 +12,9 @@ export default class Board extends Grid {
     rowHeight = 40
     columnWidth = 40
     words = null
+    world
 
-    constructor({ canvasContext, words }) {
+    constructor({ canvasContext, words, world }) {
         super()
         const canvasWidth = canvasContext.canvas.width / 2
         const gridWidth = this.columnQuantity * this.columnWidth
@@ -36,6 +37,7 @@ export default class Board extends Grid {
             })
         })
         this.words = words
+        this.world = world
     }
 
     getColumnsAndRowsWithProvisionalLetters() {
@@ -116,7 +118,6 @@ export default class Board extends Grid {
     }
 
     endTurn() {
-        console.debug('End Turn')
         const placementValid = this.isLetterPlacementValid()
 
         if (placementValid) {

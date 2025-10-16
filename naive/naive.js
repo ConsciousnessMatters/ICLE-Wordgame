@@ -48,19 +48,18 @@ export default class Naive {
 
         this.playBestOption()
         this.cleanupOptionSpace()
+        this.cleanupCounters()
     }
 
-    evaluateLine({ line, playableSpaces = null, tileRackCells, startingIndex = 0 }) {
-        if (playableSpaces === null) {
-            playableSpaces = line.toArray().filter((cell) => !cell.hasLetter())
-        }
+    evaluateLine({ line, tileRackCells }) {
+        const playableSpaces = line.toArray().filter((cell) => !cell.hasLetter())
 
         for (const combination of this.yieldCombination(tileRackCells)) {
             this.combinations++
 
             // ToDo: Anagram checking of combination + existing placed letters could optimize things here.
 
-            const iterator = this.yieldPlacement(combination, playableSpaces, startingIndex)
+            const iterator = this.yieldPlacement(combination, playableSpaces)
             const noValidPlacement = iterator.next().done
 
             if (noValidPlacement) {
@@ -70,7 +69,7 @@ export default class Naive {
             for (const permutation of this.yieldPermutation(combination)) {
                 this.permutations++
 
-                for (const attemptSpaces of this.yieldPlacement(permutation, playableSpaces, startingIndex)) {
+                for (const attemptSpaces of this.yieldPlacement(permutation, playableSpaces)) {
                     this.placements++
 
                     const permutationPlacementAttempt = permutation.slice()
@@ -130,7 +129,7 @@ export default class Naive {
         }
     }
 
-    *yieldPlacement(provisionalWord, playableSpaces, startingIndex) {
+    *yieldPlacement(provisionalWord, playableSpaces) {
         for (let i = 0; i < playableSpaces.length; i++) {
             const attemptSpaces = playableSpaces.slice(i)
             const attemptHasGameContinuity = attemptSpaces.some((attemptSpace) => attemptSpace.isGameContinuous())
@@ -186,6 +185,9 @@ export default class Naive {
 
     cleanupOptionSpace() {
         this.optionSpace = []
+    }
+
+    cleanupCounters() {
         this.combinations = 0
         this.permutations = 0
         this.placements = 0
