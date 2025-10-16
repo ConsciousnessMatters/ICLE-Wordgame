@@ -57,10 +57,17 @@ export default class Naive {
 
             // ToDo: Right cap play guard! Don't overflow the board.
 
+            const iterator = this.yieldPlacement(combination, playableSpaces, startingIndex)
+            const noValidPlacement = iterator.next().done
+
+            if (noValidPlacement) {
+                continue
+            }
+
             for (const permutation of this.yieldPermutation(combination)) {
                 permutations++
 
-                for (const attemptSpaces of this.yieldPlacement(combination, playableSpaces, startingIndex)) {
+                for (const attemptSpaces of this.yieldPlacement(permutation, playableSpaces, startingIndex)) {
                     const permutationPlacementAttempt = permutation.slice()
                     const attemptedMoves = []
                     // const text = permutation.reduce((accumulator, cell) => accumulator + cell.getLetterType(), '')
@@ -136,15 +143,16 @@ export default class Naive {
         const maxOperatingOffset = Math.min(maxCombinationOffset, maxPlayableOffset)
         const newStartingIndex = startingIndex - maxOperatingOffset
 
-        if (newStartingIndex < 0) {
-            debugger
-        }
-
-        for (let i = newStartingIndex; i < playableSpaces.length; i++) {
-            const attemptSpaces = playableSpaces.slice(i)
-            if (attemptSpaces.length >= provisionalWord.length) {
-                yield attemptSpaces
+        if (newStartingIndex >= 0) {
+            for (let i = newStartingIndex; i < playableSpaces.length; i++) {
+                const attemptSpaces = playableSpaces.slice(i)
+                if (attemptSpaces.length >= provisionalWord.length) {
+                    yield attemptSpaces
+                }
             }
+        } else {
+            // ToDo: Cleanup the fact that the line below triggers when uncommented.
+            // debugger
         }
     }
 
