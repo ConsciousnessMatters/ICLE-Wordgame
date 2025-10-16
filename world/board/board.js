@@ -7,8 +7,8 @@ import Row from '../grid/row.js'
 Line.registerWordClass(Word)
 
 export default class Board extends Grid {
-    rows = 15
-    columns = 15
+    rowQuantity = 15
+    columnQuantity = 15
     rowHeight = 40
     columnWidth = 40
     words = null
@@ -16,13 +16,13 @@ export default class Board extends Grid {
     constructor({ canvasContext, words }) {
         super()
         const canvasWidth = canvasContext.canvas.width / 2
-        const gridWidth = this.columns * this.columnWidth
+        const gridWidth = this.columnQuantity * this.columnWidth
         const gridOffsetX = (canvasWidth / 2) - (gridWidth / 2)
 
         this.canvasContext = canvasContext
-        this.cells = Array.from({ length: this.rows * this.columns }).map((_, position) => {
-            const rowIndex = Math.floor(position / this.columns)
-            const columnIndex = position % this.columns
+        this.cells = Array.from({ length: this.rowQuantity * this.columnQuantity }).map((_, position) => {
+            const rowIndex = Math.floor(position / this.columnQuantity)
+            const columnIndex = position % this.columnQuantity
 
             return new Cell({
                 canvasContext: this.canvasContext,

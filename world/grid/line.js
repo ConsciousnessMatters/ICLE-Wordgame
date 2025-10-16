@@ -12,7 +12,9 @@ export default class Line {
 
     cells = null
 
-    constructor(cells) {
+    constructor({ columnIndex = false, rowIndex = false, cells }) {
+        this.columnIndex = columnIndex
+        this.rowIndex = rowIndex
         this.cells = cells
         this.rowIndices = this.cells.map((cell) => cell.getRowIndex())
         this.columnIndices = this.cells.map((cell) => cell.getColumnIndex())
@@ -42,6 +44,18 @@ export default class Line {
 
     isColumn() {
         return false
+    }
+
+    getColumnIndex() {
+        return this.columnIndex
+    }
+
+    getRowIndex() {
+        return this.rowIndex
+    }
+
+    getKey() {
+        return `c${this.columnIndex}r${this.rowIndex}`
     }
 
     areProvisionalLettersContinuous() {

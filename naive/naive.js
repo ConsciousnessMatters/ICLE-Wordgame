@@ -10,6 +10,25 @@ export default class Naive {
 
     takeTurn() {
         const startingOptions = this.world.board.cells.filter((cell) => cell.isGameContinuous())
+        const linesForEvaluation = startingOptions.reduce((accumulator,  startingOption) => {
+            const lineKeysSoFar = accumulator.map((line) => line.getKey())
+            const column = startingOption.getColumn()
+            const row = startingOption.getRow()
+
+            if (! lineKeysSoFar.includes(column.getKey())) {
+                accumulator.push(column)
+            }
+
+            if (! lineKeysSoFar.includes(row.getKey())) {
+                accumulator.push(row)
+            }
+
+            return accumulator
+        }, [])
+
+        debugger
+
+
         startingOptions.forEach((startingOption) => this.evaluateStartingOption(startingOption))
 
         this.playBestOption()

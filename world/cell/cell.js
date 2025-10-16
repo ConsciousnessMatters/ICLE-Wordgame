@@ -101,12 +101,12 @@ export default class Cell {
     }
 
     isValidColumnIndex(columnIndex) {
-        return columnIndex <= this.board.columns &&
+        return columnIndex <= this.board.columnQuantity &&
             columnIndex >= 0
     }
 
     isValidRowIndex(rowIndex) {
-        return rowIndex <= this.board.rows &&
+        return rowIndex <= this.board.rowQuantity &&
             rowIndex >= 0
     }
 

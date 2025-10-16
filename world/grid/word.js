@@ -5,7 +5,9 @@ export default class Word extends Line {
         cells,
         lineType,
     }) {
-        super(cells)
+        super({
+            cells
+        })
         this.text = this.toText()
         this.dictionaryMatch = this.isDictionaryMatch()
         this.score = this.calculateScore()
