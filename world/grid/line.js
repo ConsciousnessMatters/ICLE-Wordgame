@@ -29,6 +29,10 @@ export default class Line {
         return this.cells.filter((cell) => cell.hasProvisionalLetter())
     }
 
+    getFirstProvisionalLetterIndex() {
+        return this.cells.findIndex((cell) => cell.hasProvisionalLetter())
+    }
+
     getWordFromProvisionalLetters() {
         const firstProvisionalLetterIndex = this.cells.findIndex((cell) => cell.hasProvisionalLetter())
         return this.getWordAtIndex(firstProvisionalLetterIndex)

@@ -29,12 +29,12 @@ export default class Naive {
 
             return accumulator
         }, [])
+        const tileRackCells = this.world.tileRack.cells.filter((cell) => cell.hasLetter())
 
-        
-
-
-
-        startingOptions.forEach((startingOption) => this.evaluateStartingOption(startingOption))
+        linesForEvaluation.forEach((line) => this.evaluateLine({
+            line,
+            tileRackCells,
+        }))
 
         const end = performance.now()
         console.log({
@@ -44,33 +44,10 @@ export default class Naive {
             placements: this.placements,
             options: this.optionSpace.length
         })
+        // debugger
 
         this.playBestOption()
         this.cleanupOptionSpace()
-    }
-
-    evaluateStartingOption(startingOption) {
-        const column = startingOption.getColumn()
-        const columnPlayableSpaces = column.toArray().filter((cell) => !cell.hasLetter())
-        const columnStartingOptionIndex = columnPlayableSpaces.findIndex((cell) => cell === startingOption)
-        const row = startingOption.getRow()
-        const rowPlayableSpaces = row.toArray().filter((cell) => !cell.hasLetter())
-        const rowStartingOptionIndex = rowPlayableSpaces.findIndex((cell) => cell === startingOption)
-        const tileRackCells = this.world.tileRack.cells.filter((cell) => cell.hasLetter())
-
-        this.evaluateLine({
-            line: column,
-            playableSpaces: columnPlayableSpaces,
-            tileRackCells,
-            startingIndex: columnStartingOptionIndex,
-        })
-
-        this.evaluateLine({
-            line: row,
-            playableSpaces: rowPlayableSpaces,
-            tileRackCells,
-            startingIndex: rowStartingOptionIndex,
-        })
     }
 
     evaluateLine({ line, playableSpaces = null, tileRackCells, startingIndex = 0 }) {
@@ -82,13 +59,6 @@ export default class Naive {
             this.combinations++
 
             // ToDo: Anagram checking of combination + existing placed letters could optimize things here.
-            // ToDo: Playlength checking of combination to available space, no point in permutating if it doesn't fit.
-
-            // if (combination.length > attemptSpaces.length) {
-            //     continue
-            // }
-
-            // ToDo: Right cap play guard! Don't overflow the board.
 
             const iterator = this.yieldPlacement(combination, playableSpaces, startingIndex)
             const noValidPlacement = iterator.next().done
@@ -105,7 +75,6 @@ export default class Naive {
 
                     const permutationPlacementAttempt = permutation.slice()
                     const attemptedMoves = []
-                    // const text = permutation.reduce((accumulator, cell) => accumulator + cell.getLetterType(), '')
 
                     attemptSpaces.some((attemptSpace) => {
                         const tileRackCell = permutationPlacementAttempt.shift()
@@ -117,8 +86,11 @@ export default class Naive {
                     })
 
                     // this.world.reRender()
+                    // debugger
 
-                    const word = line.getWordAtIndex(startingIndex)
+                    const provisionalLine = this.world.board.getProvisionalLine()
+                    const firstProvisionalLetterIndex = provisionalLine.getFirstProvisionalLetterIndex()
+                    const word = provisionalLine.getWordAtIndex(firstProvisionalLetterIndex)
 
                     if (! word) {
                         // debugger
@@ -159,21 +131,12 @@ export default class Naive {
     }
 
     *yieldPlacement(provisionalWord, playableSpaces, startingIndex) {
-        const maxCombinationOffset = provisionalWord.length - 1
-        const maxPlayableOffset = playableSpaces.slice(0, startingIndex).length
-        const maxOperatingOffset = Math.min(maxCombinationOffset, maxPlayableOffset)
-        const newStartingIndex = startingIndex - maxOperatingOffset
-
-        if (newStartingIndex >= 0) {
-            for (let i = newStartingIndex; i < playableSpaces.length; i++) {
-                const attemptSpaces = playableSpaces.slice(i)
-                if (attemptSpaces.length >= provisionalWord.length) {
-                    yield attemptSpaces
-                }
+        for (let i = 0; i < playableSpaces.length; i++) {
+            const attemptSpaces = playableSpaces.slice(i)
+            const attemptHasGameContinuity = attemptSpaces.some((attemptSpace) => attemptSpace.isGameContinuous())
+            if (attemptSpaces.length >= provisionalWord.length && attemptHasGameContinuity) {
+                yield attemptSpaces
             }
-        } else {
-            // ToDo: Cleanup the fact that the line below triggers when uncommented.
-            // debugger
         }
     }
 
@@ -195,6 +158,10 @@ export default class Naive {
     }
 
     addOption({ moves, score }) {
+        if (score === false || (! score > 0)) {
+            return
+        }
+
         const newOption = new Option({
             moves,
             score,
