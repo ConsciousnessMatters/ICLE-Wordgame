@@ -2,11 +2,19 @@ import Board from './board/board.js'
 import TileRack from './tile-rack/tile-rack.js'
 import LettersBag from './letters-bag/letters-bag.js'
 import Naive from '../naive/naive.js'
+import Turn from './turn.js'
 
 export default class World {
-    turn = 1
+    turns
     scores = []
     players = []
+    canvasContext
+    board
+    tileRack
+    lettersBag
+    naive
+    words
+    scoreUpdateFunction
 
     constructor({ canvasContext, words, scoreUpdateFunction }) {
         this.canvasContext = canvasContext
@@ -14,6 +22,7 @@ export default class World {
         this.tileRack = new TileRack({ canvasContext })
         this.lettersBag = new LettersBag({ canvasContext })
         this.naive = new Naive({ world: this })
+        this.turns = [new Turn(1)]
         this.words = words
         this.scoreUpdateFunction = scoreUpdateFunction
 
@@ -130,35 +139,34 @@ export default class World {
     }
 
     setupControls() {
-        const endTurn = (e) => {
-            const newScore = this.board.endTurn()
-            this.scores.push(newScore)
-            this.refreshTileRacks()
-            this.scoreUpdateFunction({
-                turnNumber: this.turn,
-                wordPoints: newScore,
-                totalPoints: this.scores.reduce((accumulator, score) => accumulator + score, 0),
-            })
-            this.reRender()
-            this.turn++
-        }
-
         const forceComputerTurn = (e) => {
             this.naive.takeTurn()
-            const newScore = this.board.endTurn()
-            this.scores.push(newScore)
-            this.refreshTileRacks()
-            this.scoreUpdateFunction({
-                turnNumber: this.turn,
-                wordPoints: newScore,
-                totalPoints: this.scores.reduce((accumulator, score) => accumulator + score, 0),
-            })
-            this.reRender()
-            this.turn++
+            this.endTurn()
         }
 
-        document.getElementById('end-turn').addEventListener('click', endTurn)
+        document.getElementById('end-turn').addEventListener('click', this.endTurn)
         document.getElementById('force-computer-turn').addEventListener('click', forceComputerTurn)
+    }
+
+    returnTurn() {
+        const [ currentTerm ] = this.turns
+        return currentTerm
+    }
+
+    endTurn() {
+        const newScore = this.board.endTurn()
+        this.scores.push(newScore)
+        this.refreshTileRacks()
+        this.scoreUpdateFunction({
+            turnNumber: this.returnTurn().getTurnNumber(),
+            wordPoints: newScore,
+            totalPoints: this.scores.reduce((accumulator, score) => accumulator + score, 0),
+        })
+        this.reRender()
+        this.turns = [
+            this.returnTurn().returnNewTurn(),
+            ...this.turns,
+        ]
     }
 
     clear() {
