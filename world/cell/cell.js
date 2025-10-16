@@ -1,6 +1,18 @@
 export default class Cell {
+    id
+    canvasContext
+    board
+    rowIndex
+    columnIndex
+    gridOffsetX
+    gridOffsetY
+    rowHeight
+    columnWidth
+    letter
+    xOffset
+    yOffset
 
-    constructor({ 
+    constructor({
         canvasContext,
         board,
         rowIndex,
@@ -10,6 +22,7 @@ export default class Cell {
         rowHeight,
         columnWidth,
     }) {
+        this.id = crypto.randomUUID()
         this.canvasContext = canvasContext
         this.board = board
         this.rowIndex = rowIndex
@@ -21,6 +34,10 @@ export default class Cell {
         this.letter = null
         this.xOffset = (this.columnIndex * this.columnWidth) + this.gridOffsetX
         this.yOffset = (this.rowIndex * this.rowHeight) + this.gridOffsetY
+    }
+
+    getId() {
+        return this.id
     }
 
     hasLetter() {
