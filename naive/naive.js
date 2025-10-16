@@ -91,7 +91,6 @@ export default class Naive {
                     }
 
                     if (word && word.isDictionaryMatch()) {
-                        this.world.reRender()
                         // debugger
                         // this.world.reRender()
                         words++
