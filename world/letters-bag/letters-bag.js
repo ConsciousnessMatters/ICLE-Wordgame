@@ -1,6 +1,9 @@
 import Letter from '../letter/letter.js'
 
 export default class LettersBag {
+    letters
+    canvasContext
+
     constructor({ canvasContext }) {
         this.canvasContext = canvasContext
         this.resetContents()
@@ -41,7 +44,7 @@ export default class LettersBag {
     getRandomLetter() {
         const randomIndex = Math.floor(Math.random() * this.letters.length)
         const [ randomLetter ] = this.letters.splice(randomIndex, 1)
-        return randomLetter
+        return randomLetter ?? null
     }
 
     getRandomLetters(number) {
