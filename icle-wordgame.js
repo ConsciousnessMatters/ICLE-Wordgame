@@ -4,6 +4,7 @@ import World from './world/world.js'
 import { loadWordList } from './world/words/words.js'
 
 const words = await loadWordList()
+const naive = new Worker('./naive/naive.js', { type: 'module' });
 
 const scoreUpdateFunction = ({
     turnNumber,
@@ -29,5 +30,5 @@ canvasContext.canvas.width = canvasContext.canvas.scrollWidth * scaleFactor
 canvasContext.canvas.height = canvasContext.canvas.scrollHeight * scaleFactor
 canvasContext.scale(scaleFactor, scaleFactor)
 
-const world = new World({ canvasContext, words, scoreUpdateFunction })
+const world = new World({ canvasContext, words, scoreUpdateFunction, naive })
 world.render()

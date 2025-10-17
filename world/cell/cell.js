@@ -21,6 +21,7 @@ export default class Cell {
         gridOffsetY,
         rowHeight,
         columnWidth,
+        letter = null,
     }) {
         this.id = crypto.randomUUID()
         this.canvasContext = canvasContext
@@ -31,7 +32,7 @@ export default class Cell {
         this.gridOffsetY = gridOffsetY
         this.rowHeight = rowHeight
         this.columnWidth = columnWidth
-        this.letter = null
+        this.letter = letter
         this.xOffset = (this.columnIndex * this.columnWidth) + this.gridOffsetX
         this.yOffset = (this.rowIndex * this.rowHeight) + this.gridOffsetY
     }
@@ -234,6 +235,10 @@ export default class Cell {
 
     rollback() {
         if (this.letter) this.letter.rollback(this)
+    }
+
+    export() {
+        return this.getLetterType() ?? '_'
     }
 
     render() {

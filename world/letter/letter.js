@@ -6,7 +6,7 @@ export default class Letter {
     type = null
     turnRollBackCell = null
 
-    constructor(canvasContext, type) {
+    constructor({ canvasContext, type }) {
         this.canvasContext = canvasContext
 
         if (/^[A-Z]$/.test(type)) {

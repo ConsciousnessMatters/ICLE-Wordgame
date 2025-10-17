@@ -1,5 +1,7 @@
 import Column from '../grid/column.js'
 import Row from '../grid/row.js'
+import Cell from '../cell/cell.js'
+import Letter from '../letter/letter.js'
 
 export default class Grid {
     columns = []
@@ -46,6 +48,17 @@ export default class Grid {
     getCell({ columnIndex, rowIndex }) {
         const cell = this.cells.find((cell) => cell.getColumnIndex() === columnIndex && cell.getRowIndex() === rowIndex)
         return cell
+    }
+
+    export() {
+        return this.cells.reduce((accumulator, cell) => accumulator + cell.export(), '')
+    }
+
+    import(configuration) {
+        [...configuration].forEach((letter, index) => {
+            this.cells[index].addLetter(letter !== '_'  ? new Letter({ type: letter }) : null)
+            return 
+        })
     }
 
     render() {

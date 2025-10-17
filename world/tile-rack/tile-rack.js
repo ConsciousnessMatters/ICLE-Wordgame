@@ -9,8 +9,8 @@ export default class TileRack extends Grid {
 
     constructor({ canvasContext }) {
         super()
-        const canvasWidth = canvasContext.canvas.width / 2
-        const canvasHeight = canvasContext.canvas.height / 2
+        const canvasWidth = canvasContext ? (canvasContext.canvas.width / 2) : 1920
+        const canvasHeight = canvasContext ? (canvasContext.canvas.height / 2) : 1080
         const gridWidth = this.columnQuantity * this.columnWidth
         const gridOffsetX = (canvasWidth / 2) - (gridWidth / 2)
 

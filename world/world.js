@@ -1,7 +1,6 @@
 import Board from './board/board.js'
 import TileRack from './tile-rack/tile-rack.js'
 import LettersBag from './letters-bag/letters-bag.js'
-import Naive from '../naive/naive.js'
 import Turn from './turn.js'
 
 export default class World {
@@ -12,23 +11,31 @@ export default class World {
     board
     tileRack
     lettersBag
-    naive
     words
     scoreUpdateFunction
+    naive
 
-    constructor({ canvasContext, words, scoreUpdateFunction }) {
+    constructor({ 
+        canvasContext = null, 
+        words, 
+        scoreUpdateFunction = () => {}, 
+        naive = null 
+    }) {
         this.canvasContext = canvasContext
         this.board = new Board({ canvasContext, words, world: this })
         this.tileRack = new TileRack({ canvasContext })
         this.lettersBag = new LettersBag({ canvasContext })
-        this.naive = new Naive({ world: this })
         this.turns = [new Turn(1)]
         this.words = words
         this.scoreUpdateFunction = scoreUpdateFunction
+        this.naive = naive ?? null
 
         this.setupTileRacks()
-        this.setupDragAndDrop()
-        this.setupControls()
+        if (this.canvasContext) {
+            this.setupDragAndDrop()
+            this.setupControls()
+            this.setupWorkerMessaging()
+        }
     }
 
     setupTileRacks() {
@@ -138,14 +145,64 @@ export default class World {
         newCell.addLetter(movingLetter)
     }
 
+    makeMove({ move: letterMoves }) {
+        letterMoves.forEach((letterMove) => {
+            const [ source, destination ] = letterMove
+            const oldCell = this.tileRack.getCell({ 
+                columnIndex: source[0],
+                rowIndex: source[1],
+            })
+            const newCell = this.board.getCell({ 
+                columnIndex: destination[0],
+                rowIndex: destination[1],
+            })
+            this.moveLetter(oldCell, newCell)
+        })
+    }
+
     setupControls() {
         const forceComputerTurn = (e) => {
-            this.naive.takeTurn()
+            const tileRackExport = this.tileRack.export()
+            const boardExport = this.board.export()
+            this.messageNaive({
+                command: 'takeTurn',
+                tileRackExport,
+                boardExport,
+            })
+        }
+
+        const endTurn = (e) => {
             this.endTurn()
         }
 
-        document.getElementById('end-turn').addEventListener('click', this.endTurn)
+        document.getElementById('end-turn').addEventListener('click', endTurn)
         document.getElementById('force-computer-turn').addEventListener('click', forceComputerTurn)
+    }
+
+    setupWorkerMessaging() {
+        this.naive.onmessage = (event) => {
+            switch(event.data?.command) {
+                case 'makeMove':
+                    this.makeMove({
+                        move: event.data?.move,
+                    })
+                    this.endTurn()
+                    break
+                case 'showMove':
+                    this.makeMove({
+                        move: event.data?.move,
+                    })
+                    this.reRender()
+                    this.board.rollbackBoardTiles()
+                    break
+            }
+        }
+    }
+
+    messageNaive(message) {
+        if (this.naive) {
+            this.naive.postMessage(message)
+        }
     }
 
     returnTurn() {

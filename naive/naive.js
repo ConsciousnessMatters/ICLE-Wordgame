@@ -1,4 +1,8 @@
 import Option from './option.js'
+import World from '../world/world.js'
+import { loadWordList } from '../world/words/words.js'
+
+const words = await loadWordList()
 
 export default class Naive {
     world = null
@@ -7,11 +11,32 @@ export default class Naive {
     permutations = 0
     placements = 0
 
-    constructor({ world }) {
-        this.world = world
+    constructor() {
+        this.world = new World({ 
+            canvasContext: null, 
+            words, 
+            scoreUpdateFunction: () => {}, 
+            naive: null,
+        })
     }
 
-    takeTurn() {
+    setupMessaging() {
+        self.onmessage = (event) => {
+            switch (event.data?.command) {
+                case 'takeTurn':
+                    this.takeTurn({
+                        tileRackImport: event.data?.tileRackExport,
+                        boardImport: event.data?.boardExport,
+                    })
+                break
+            }
+        }
+    }
+
+    takeTurn({ tileRackImport, boardImport }) {
+        this.world.board.import(boardImport)
+        this.world.tileRack.import(tileRackImport)
+
         const start = performance.now()
         const startingOptions = this.world.board.cells.filter((cell) => cell.isGameContinuous())
         const linesForEvaluation = startingOptions.reduce((accumulator,  startingOption) => {
@@ -96,11 +121,13 @@ export default class Naive {
                         // ToDo: This shouldn't fire as often as it did before I commented it out.
                     }
 
-                    if (word && word.isDictionaryMatch()) {
-                        this.addOption({
+                    if (word && word.isDictionaryMatch() && this.calculateScoreIfPlayValid()) {
+                        const newOption = {
                             moves: attemptedMoves, 
                             score: this.calculateScoreIfPlayValid(),
-                        })
+                        }
+                        this.addOption(newOption)
+                        // debugger
                     }
 
                     this.world.board.rollbackBoardTiles()
@@ -169,6 +196,7 @@ export default class Naive {
 
         if (! this.optionSpace.includes((option) => option.getKey() === newOptionKey)) {
             this.optionSpace.push(newOption)
+            this.ghostPlayOption(newOption)
             // debugger
         }
     }
@@ -179,8 +207,28 @@ export default class Naive {
             : null
     }
 
+    ghostPlayOption(option) {
+        const move = option.moves.map((move) => [
+            [move.tileRackCell.getColumnIndex(), move.tileRackCell.getRowIndex()],
+            [move.attemptSpace.getColumnIndex(), move.attemptSpace.getRowIndex()],
+        ])
+
+        self.postMessage({
+            command: 'showMove',
+            move,
+        })
+    }
+
     playOption(option) {
-        option.moves.forEach((move) => this.world.moveLetter(move.tileRackCell, move.attemptSpace))
+        const move = option.moves.map((move) => [
+            [move.tileRackCell.getColumnIndex(), move.tileRackCell.getRowIndex()],
+            [move.attemptSpace.getColumnIndex(), move.attemptSpace.getRowIndex()],
+        ])
+
+        self.postMessage({
+            command: 'makeMove',
+            move,
+        })
     }
 
     cleanupOptionSpace() {
@@ -199,3 +247,6 @@ export default class Naive {
         // debugger
     }
 }
+
+const naive = new Naive()
+naive.setupMessaging()

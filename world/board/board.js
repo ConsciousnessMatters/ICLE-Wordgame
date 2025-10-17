@@ -16,7 +16,7 @@ export default class Board extends Grid {
 
     constructor({ canvasContext, words, world }) {
         super()
-        const canvasWidth = canvasContext.canvas.width / 2
+        const canvasWidth = canvasContext ? (canvasContext.canvas.width / 2) : 1920
         const gridWidth = this.columnQuantity * this.columnWidth
         const gridOffsetX = (canvasWidth / 2) - (gridWidth / 2)
 
