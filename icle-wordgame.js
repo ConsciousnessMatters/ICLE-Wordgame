@@ -6,8 +6,10 @@ import { loadWordList } from './world/words/words.js'
 const words = await loadWordList()
 
 const naive = {}
+// const workerQuantity = window.navigator.hardwareConcurrency
+const workerQuantity = 30 // Simulataneous processing of all rows and columns is visually entertaining.
 
-for (let i = 0; i < window.navigator.hardwareConcurrency; i++) {
+for (let i = 0; i < workerQuantity; i++) {
     naive[`t${i}`] = new Worker(`./naive/naive.js?v=${Date.now()}`, { type: 'module' })
 }
 
