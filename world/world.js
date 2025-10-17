@@ -14,6 +14,8 @@ export default class World {
     words
     scoreUpdateFunction
     naive
+    shadowMoves = []
+    shadowQueueAnimationFrameId
 
     constructor({ 
         canvasContext = null, 
@@ -29,6 +31,7 @@ export default class World {
         this.words = words
         this.scoreUpdateFunction = scoreUpdateFunction
         this.naive = naive ?? null
+        this.processShadowMoveQueue = this.processShadowMoveQueue.bind(this)
 
         this.setupTileRacks()
         if (this.canvasContext) {
@@ -145,7 +148,27 @@ export default class World {
         newCell.addLetter(movingLetter)
     }
 
-    makeMove({ move: letterMoves }) {
+    queueShadowMove(moveData) {
+        this.shadowMoves.push(moveData)
+    }
+
+    queueMove(moveData) {
+        this.finalMove = moveData
+    }
+
+    processShadowMoveQueue() {
+        this.shadowQueueAnimationFrameId = true
+
+        if (this.shadowMoves.length > 0) {
+            const nextShadowMove = this.shadowMoves.shift()
+            this.makeMove(nextShadowMove)
+            this.shadowQueueAnimationFrameId = requestAnimationFrame(this.processShadowMoveQueue)
+        } else {
+            this.shadowQueueAnimationFrameId = false
+        }
+    }
+
+    makeMove({ move: letterMoves, type }) {
         letterMoves.forEach((letterMove) => {
             const [ source, destination ] = letterMove
             const oldCell = this.tileRack.getCell({ 
@@ -158,6 +181,13 @@ export default class World {
             })
             this.moveLetter(oldCell, newCell)
         })
+
+        if (type === 'shadow') {
+            this.reRender()
+            this.board.rollbackBoardTiles()
+        } else if (type === 'normal') {
+            this.shadowMoves = []
+        }
     }
 
     setupControls() {
@@ -185,15 +215,18 @@ export default class World {
                 case 'makeMove':
                     this.makeMove({
                         move: event.data?.move,
+                        type: 'normal',
                     })
                     this.endTurn()
                     break
                 case 'showMove':
-                    this.makeMove({
+                    this.queueShadowMove({
                         move: event.data?.move,
+                        type: 'shadow',
                     })
-                    this.reRender()
-                    this.board.rollbackBoardTiles()
+                    if (! this.shadowQueueAnimationFrameId) {
+                        this.processShadowMoveQueue()
+                    }
                     break
             }
         }
