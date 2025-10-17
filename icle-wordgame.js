@@ -4,7 +4,12 @@ import World from './world/world.js'
 import { loadWordList } from './world/words/words.js'
 
 const words = await loadWordList()
-const naive = new Worker('./naive/naive.js', { type: 'module' });
+
+const naive = {}
+
+for (let i = 0; i < window.navigator.hardwareConcurrency; i++) {
+    naive[`t${i}`] = new Worker(`./naive/naive.js?v=${Date.now()}`, { type: 'module' })
+}
 
 const scoreUpdateFunction = ({
     turnNumber,

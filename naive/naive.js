@@ -27,13 +27,15 @@ export default class Naive {
                     this.takeTurn({
                         tileRackImport: event.data?.tileRackExport,
                         boardImport: event.data?.boardExport,
+                        workerKey: event.data?.workerKey,
+                        workerQuantity: event.data?.workerQuantity,
                     })
                 break
             }
         }
     }
 
-    takeTurn({ tileRackImport, boardImport }) {
+    takeTurn({ tileRackImport, boardImport, workerKey, workerQuantity }) {
         this.world.board.import(boardImport)
         this.world.tileRack.import(tileRackImport)
 
@@ -54,12 +56,18 @@ export default class Naive {
 
             return accumulator
         }, [])
-        const tileRackCells = this.world.tileRack.cells.filter((cell) => cell.hasLetter())
 
-        linesForEvaluation.forEach((line) => this.evaluateLine({
-            line,
-            tileRackCells,
-        }))
+        const tileRackCells = this.world.tileRack.cells.filter((cell) => cell.hasLetter())
+        const workerNumber = Number(workerKey.substring(1))
+
+        linesForEvaluation.forEach((line, index) => {
+            if (workerNumber === index % workerQuantity) {
+                this.evaluateLine({
+                    line,
+                    tileRackCells,
+                })
+            }
+        })
 
         const end = performance.now()
         console.log({
@@ -220,15 +228,24 @@ export default class Naive {
     }
 
     playOption(option) {
-        const move = option.moves.map((move) => [
-            [move.tileRackCell.getColumnIndex(), move.tileRackCell.getRowIndex()],
-            [move.attemptSpace.getColumnIndex(), move.attemptSpace.getRowIndex()],
-        ])
+        if (option) {
+            const move = option.moves.map((move) => [
+                [move.tileRackCell.getColumnIndex(), move.tileRackCell.getRowIndex()],
+                [move.attemptSpace.getColumnIndex(), move.attemptSpace.getRowIndex()],
+            ])
 
-        self.postMessage({
-            command: 'makeMove',
-            move,
-        })
+            self.postMessage({
+                command: 'makeMove',
+                move,
+                score: option.score,
+            })
+        } else {
+            self.postMessage({
+                command: 'makeMove',
+                move: [],
+                score: 0,
+            })
+        }
     }
 
     cleanupOptionSpace() {

@@ -15,6 +15,7 @@ export default class World {
     scoreUpdateFunction
     naive
     shadowMoves = []
+    bestMoves = []
     shadowQueueAnimationFrameId
 
     constructor({ 
@@ -152,8 +153,16 @@ export default class World {
         this.shadowMoves.push(moveData)
     }
 
-    queueMove(moveData) {
-        this.finalMove = moveData
+    queueBestMove(moveData) {
+        this.bestMoves.push(moveData)
+
+        if (this.bestMoves.length === Object.entries(this.naive).length) {
+            const bestMove = this.bestMoves.reduce((accumulator, option) => (option.score > accumulator.score ? option : accumulator))
+
+            this.makeMove(bestMove)
+            this.bestMoves = []
+            this.endTurn()
+        }
     }
 
     processShadowMoveQueue() {
@@ -210,19 +219,22 @@ export default class World {
     }
 
     setupWorkerMessaging() {
-        this.naive.onmessage = (event) => {
+        const onWorkerMessage = (event) => {
             switch(event.data?.command) {
                 case 'makeMove':
-                    this.makeMove({
+                    // this.makeMove()
+                    this.queueBestMove({
                         move: event.data?.move,
                         type: 'normal',
+                        score: event.data?.score,
                     })
-                    this.endTurn()
+                    // this.endTurn()
                     break
                 case 'showMove':
                     this.queueShadowMove({
                         move: event.data?.move,
                         type: 'shadow',
+                        score: event.data?.score,
                     })
                     if (! this.shadowQueueAnimationFrameId) {
                         this.processShadowMoveQueue()
@@ -230,11 +242,20 @@ export default class World {
                     break
             }
         }
+        Object.entries(this.naive).forEach(([key, worker]) => {
+            worker.onmessage = onWorkerMessage
+        })
     }
 
     messageNaive(message) {
         if (this.naive) {
-            this.naive.postMessage(message)
+            Object.entries(this.naive).forEach(([workerKey, worker]) => {
+                worker.postMessage({
+                    ...message,
+                    workerKey,
+                    workerQuantity: Object.entries(this.naive).length,
+                })
+            })
         }
     }
 
