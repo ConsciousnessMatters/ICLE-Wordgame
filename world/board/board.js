@@ -12,7 +12,7 @@ export default class Board extends Grid {
     rowHeight = 40
     columnWidth = 40
     words = null
-    world
+    world = null
 
     constructor({ canvasContext, words, world }) {
         super()
@@ -127,13 +127,16 @@ export default class Board extends Grid {
 
             if (areAllWordsValid) {
                 this.commitBoardTiles()
+                console.debug(`Tiles committed for round ${this.world.returnTurn().getRoundNumber()}, turn ${this.world.returnTurn().getTurnNumber()}.`)
+                return score
             } else {
                 this.rollbackBoardTiles()
+                console.debug(`Tiles rejected (Not All Words Valid) for round ${this.world.returnTurn().getRoundNumber()}, turn ${this.world.returnTurn().getTurnNumber()}.`)
+                return 0
             }
-
-            return score
         } else {
             this.rollbackBoardTiles()
+            console.debug(`Tiles rejected (Inavlid Placement) for round ${this.world.returnTurn().getRoundNumber()}, turn ${this.world.returnTurn().getTurnNumber()}.`)
             return 0
         }
     }
