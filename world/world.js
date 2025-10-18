@@ -9,7 +9,8 @@ export default class World {
     players = []
     canvasContext
     board
-    tileRack
+    humanTileRack
+    naiveTileRack
     lettersBag
     words
     scoreUpdateFunction
@@ -26,7 +27,8 @@ export default class World {
     }) {
         this.canvasContext = canvasContext
         this.board = new Board({ canvasContext, words, world: this })
-        this.tileRack = new TileRack({ canvasContext })
+        this.humanTileRack = new TileRack({ canvasContext })
+        this.naiveTileRack = new TileRack({ canvasContext })
         this.lettersBag = new LettersBag({ canvasContext })
         this.turns = [new Turn(1)]
         this.words = words
@@ -43,14 +45,20 @@ export default class World {
     }
 
     setupTileRacks() {
-        const newLetters = this.lettersBag.getRandomLetters(7)
-        this.tileRack.addLetters(newLetters)
+        const newHumanLetters = this.lettersBag.getRandomLetters(7)
+        const newNaiveLetters = this.lettersBag.getRandomLetters(7)
+        this.humanTileRack.addLetters(newHumanLetters)
+        this.naiveTileRack.addLetters(newNaiveLetters)
     }
 
     refreshTileRacks() {
-        const tilesShort = this.tileRack.countTilesShort()
-        const newLetters = this.lettersBag.getRandomLetters(tilesShort)
-        this.tileRack.addLetters(newLetters)
+        const tilesHumanShort = this.humanTileRack.countTilesShort()
+        const newHumanLetters = this.lettersBag.getRandomLetters(tilesHumanShort)
+        const tilesNaiveShort = this.naiveTileRack.countTilesShort()
+        const newNaiveLetters = this.lettersBag.getRandomLetters(tilesNaiveShort)
+
+        this.humanTileRack.addLetters(newHumanLetters)
+        this.naiveTileRack.addLetters(newNaiveLetters)
     }
 
     setupDragAndDrop() {
@@ -82,7 +90,7 @@ export default class World {
                 y: e.y,
             })
 
-            const tileRackCell = this.tileRack.getCellAtPixelLocation({
+            const tileRackCell = this.humanTileRack.getCellAtPixelLocation({
                 x: e.x,
                 y: e.y,
             })
@@ -93,7 +101,7 @@ export default class World {
                 movingLetter.setTurnRollBackCell(tileRackCell)
             }
 
-            if (boardCell && boardCell.hasLetter()) {
+            if (boardCell && boardCell.hasProvisionalLetter()) {
                 moveOriginCell = boardCell
                 movingLetter = boardCell.removeLetter()
             }
@@ -115,7 +123,7 @@ export default class World {
                 y: e.y,
             })
 
-            const tileRackCell = this.tileRack.getCellAtPixelLocation({
+            const tileRackCell = this.humanTileRack.getCellAtPixelLocation({
                 x: e.x,
                 y: e.y,
             })
@@ -178,9 +186,11 @@ export default class World {
     }
 
     makeMove({ move: letterMoves, type }) {
+        const sourceRack = this.returnTurn().isHuman() ? this.humanTileRack : this.naiveTileRack
+
         letterMoves.forEach((letterMove) => {
             const [ source, destination ] = letterMove
-            const oldCell = this.tileRack.getCell({ 
+            const oldCell = sourceRack.getCell({ 
                 columnIndex: source[0],
                 rowIndex: source[1],
             })
@@ -199,23 +209,22 @@ export default class World {
         }
     }
 
-    setupControls() {
-        const forceComputerTurn = (e) => {
-            const tileRackExport = this.tileRack.export()
-            const boardExport = this.board.export()
-            this.messageNaive({
-                command: 'takeTurn',
-                tileRackExport,
-                boardExport,
-            })
-        }
+    handOverToNaive() {
+        const tileRackExport = this.naiveTileRack.export()
+        const boardExport = this.board.export()
+        this.messageNaive({
+            command: 'takeTurn',
+            tileRackExport,
+            boardExport,
+        })
+    }
 
+    setupControls() {
         const endTurn = (e) => {
             this.endTurn()
         }
 
         document.getElementById('end-turn').addEventListener('click', endTurn)
-        document.getElementById('force-computer-turn').addEventListener('click', forceComputerTurn)
     }
 
     setupWorkerMessaging() {
@@ -266,18 +275,27 @@ export default class World {
 
     endTurn() {
         const newScore = this.board.endTurn()
-        this.scores.push(newScore)
+        const newHumanScore = this.returnTurn().isHuman() ? newScore : 0
+        const newNaiveScore = this.returnTurn().isNaive() ? newScore : 0
+        this.scores.push([newHumanScore, newNaiveScore])
         this.refreshTileRacks()
         this.scoreUpdateFunction({
-            turnNumber: this.returnTurn().getTurnNumber(),
-            wordPoints: newScore,
-            totalPoints: this.scores.reduce((accumulator, score) => accumulator + score, 0),
+            roundNumber: this.returnTurn().getRoundNumber(),
+            isHuman: this.returnTurn().isHuman(),
+            humanWordPoints: newHumanScore,
+            naiveWordPoints: newNaiveScore,
+            totalHumanPoints: this.scores.reduce((accumulator, [ newHumanScore, newNaiveScore ]) => accumulator + newHumanScore, 0),
+            totalNaivePoints: this.scores.reduce((accumulator, [ newHumanScore, newNaiveScore ]) => accumulator + newNaiveScore, 0),
         })
         this.reRender()
         this.turns = [
             this.returnTurn().returnNewTurn(),
             ...this.turns,
         ]
+
+        if (this.returnTurn().isNaive()) {
+            this.handOverToNaive()
+        }
     }
 
     clear() {
@@ -286,7 +304,7 @@ export default class World {
 
     render() {
         this.board.render()
-        this.tileRack.render()
+        this.humanTileRack.render()
         this.lettersBag.render()
     }
 

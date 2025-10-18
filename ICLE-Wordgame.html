@@ -39,12 +39,20 @@
 			h3 {
 				margin-top: 0;
 			}
-			.scores > div {
+			#scores > .score-entry {
 				display: flex;
 			}
-			.scores > div > div {
-				flex: 1;
+
+			table {
+				width: 100%;
+				table-layout: fixed;
 			}
+
+			th {
+				text-align: left;
+				font-weight: normal;
+			}
+
 			button {
 				margin-right: 8px;
 			}
@@ -55,12 +63,24 @@
 		<div id="scores-and-control">
 			<div id="scores">
 				<h3>Scores</h3>
-				<div id="player-1" class="scores"></div>
+				<table>
+					<tr>
+						<th></th>
+						<th colspan="2">Human</th>
+						<th colspan="2">NAIVE</th>
+					</tr>
+					<tr>
+						<th></th>
+						<th>Round</th>
+						<th>Total</th>
+						<th>Round</th>
+						<th>Total</th>
+					</tr>
+				</table>
 			</div>
 			<div id="control">
 				<h3>Controls</h3>
 				<button id="end-turn">End Turn</button>
-				<button id="force-computer-turn">Force Computer Turn</button>
 			</div>
 		</div>
 		<script src="icle-wordgame.js" type="module"></script>

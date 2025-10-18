@@ -37,7 +37,7 @@ export default class Naive {
 
     takeTurn({ tileRackImport, boardImport, workerKey, workerQuantity }) {
         this.world.board.import(boardImport)
-        this.world.tileRack.import(tileRackImport)
+        this.world.naiveTileRack.import(tileRackImport)
 
         const start = performance.now()
         const startingOptions = this.world.board.cells.filter((cell) => cell.isGameContinuous())
@@ -57,7 +57,7 @@ export default class Naive {
             return accumulator
         }, [])
 
-        const tileRackCells = this.world.tileRack.cells.filter((cell) => cell.hasLetter())
+        const tileRackCells = this.world.naiveTileRack.cells.filter((cell) => cell.hasLetter())
         const workerNumber = Number(workerKey.substring(1))
 
         linesForEvaluation.forEach((line, index) => {
