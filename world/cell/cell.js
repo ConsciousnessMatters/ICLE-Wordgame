@@ -94,7 +94,7 @@ export default class Cell {
     }
 
     getLetterValue() {
-        const cellMultiplier = this.isQuadLetterCell() ? 4 : 1
+        const cellMultiplier = (this.isQuadLetterCell() && this.hasProvisionalLetter()) ? 4 : 1
         return this.letter ? (this.letter.getValue() * cellMultiplier) : null
     }
 
