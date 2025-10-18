@@ -41,6 +41,7 @@ export default class World {
             this.setupDragAndDrop()
             this.setupControls()
             this.setupWorkerMessaging()
+            this.setupConsoleAccess()
         }
     }
 
@@ -254,6 +255,27 @@ export default class World {
         Object.entries(this.naive).forEach(([key, worker]) => {
             worker.onmessage = onWorkerMessage
         })
+    }
+
+    setupConsoleAccess() {
+        if (this.canvasContext) {
+            window.world = this
+        }
+    }
+
+    exportGameState() {
+        console.log({
+            humanTileRack: this.humanTileRack.export(),
+            naiveTileRack: this.naiveTileRack.export(),
+            board: this.board.export(),
+        })
+    }
+
+    importGameState(stateObject) {
+        this.humanTileRack.import(stateObject.humanTileRack)
+        this.naiveTileRack.import(stateObject.naiveTileRack)
+        this.board.import(stateObject.board)
+        this.reRender()
     }
 
     messageNaive(message) {
