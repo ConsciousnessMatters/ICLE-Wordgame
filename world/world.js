@@ -62,6 +62,10 @@ export default class World {
         this.naiveTileRack.addLetters(newNaiveLetters)
     }
 
+    isATileRackEmpty() {
+        return this.humanTileRack.isEmpty() || this.naiveTileRack.isEmpty()
+    }
+
     setupDragAndDrop() {
         let movingLetter,
             moveOriginCell
@@ -171,6 +175,7 @@ export default class World {
             this.makeMove(bestMove)
             this.bestMoves = []
             this.endTurn()
+            document.getElementById('end-turn').disabled = false
         }
     }
 
@@ -211,6 +216,7 @@ export default class World {
     }
 
     handOverToNaive() {
+        document.getElementById('end-turn').disabled = true
         const tileRackExport = this.naiveTileRack.export()
         const boardExport = this.board.export()
         this.messageNaive({
@@ -232,13 +238,11 @@ export default class World {
         const onWorkerMessage = (event) => {
             switch(event.data?.command) {
                 case 'makeMove':
-                    // this.makeMove()
                     this.queueBestMove({
                         move: event.data?.move,
                         type: 'normal',
                         score: event.data?.score,
                     })
-                    // this.endTurn()
                     break
                 case 'showMove':
                     this.queueShadowMove({
@@ -299,8 +303,9 @@ export default class World {
         const newScore = this.board.endTurn()
         const newHumanScore = this.returnTurn().isHuman() ? newScore : 0
         const newNaiveScore = this.returnTurn().isNaive() ? newScore : 0
-        this.scores.push([newHumanScore, newNaiveScore])
         this.refreshTileRacks()
+
+        this.scores.push([newHumanScore, newNaiveScore])
         this.scoreUpdateFunction({
             roundNumber: this.returnTurn().getRoundNumber(),
             isHuman: this.returnTurn().isHuman(),
@@ -310,6 +315,11 @@ export default class World {
             totalNaivePoints: this.scores.reduce((accumulator, [ newHumanScore, newNaiveScore ]) => accumulator + newNaiveScore, 0),
         })
         this.reRender()
+
+        if (this.isATileRackEmpty()) {
+            return this.endGame()
+        }
+
         this.turns = [
             this.returnTurn().returnNewTurn(newScore),
             ...this.turns,
@@ -318,6 +328,32 @@ export default class World {
         if (this.returnTurn().isNaive()) {
             this.handOverToNaive()
         }
+    }
+
+    endGame() {
+        const humanScoreDeduction = this.humanTileRack.sumLetterValues() * -1
+        const naiveScoreDeduction = this.naiveTileRack.sumLetterValues() * -1
+
+        this.scores.push([humanScoreDeduction, naiveScoreDeduction])
+        this.scoreUpdateFunction({
+            roundNumber: this.returnTurn().getRoundNumber(),
+            isHuman: true,
+            humanWordPoints: humanScoreDeduction,
+            naiveWordPoints: naiveScoreDeduction,
+            totalHumanPoints: this.scores.reduce((accumulator, [ newHumanScore, newNaiveScore ]) => accumulator + newHumanScore, 0),
+            totalNaivePoints: this.scores.reduce((accumulator, [ newHumanScore, newNaiveScore ]) => accumulator + newNaiveScore, 0),
+        })
+        this.scoreUpdateFunction({
+            roundNumber: this.returnTurn().getRoundNumber(),
+            isHuman: false,
+            humanWordPoints: humanScoreDeduction,
+            naiveWordPoints: naiveScoreDeduction,
+            totalHumanPoints: this.scores.reduce((accumulator, [ newHumanScore, newNaiveScore ]) => accumulator + newHumanScore, 0),
+            totalNaivePoints: this.scores.reduce((accumulator, [ newHumanScore, newNaiveScore ]) => accumulator + newNaiveScore, 0),
+        })
+
+        this.reRender()
+        document.getElementById('end-turn').disabled = false
     }
 
     clear() {

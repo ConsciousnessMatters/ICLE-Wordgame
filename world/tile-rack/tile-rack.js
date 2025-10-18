@@ -51,4 +51,16 @@ export default class TileRack extends Grid {
             }
         }).length
     }
+
+    isEmpty() {
+        return this.cells.filter((cell) => {
+            if (cell.hasLetter()) {
+                return true
+            }
+        }).length === 0
+    }
+
+    sumLetterValues() {
+        return this.cells.reduce((accumulator, cell) => accumulator + cell.getLetterValue(), 0)
+    }
 }
