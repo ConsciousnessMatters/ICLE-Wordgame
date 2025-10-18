@@ -18,6 +18,7 @@ export default class World {
     shadowMoves = []
     bestMoves = []
     shadowQueueAnimationFrameId
+    autoPlay = false
 
     constructor({ 
         canvasContext = null, 
@@ -175,7 +176,9 @@ export default class World {
             this.makeMove(bestMove)
             this.bestMoves = []
             this.endTurn()
-            document.getElementById('end-turn').disabled = false
+            if (! this.isATileRackEmpty()) {
+                document.getElementById('end-turn').disabled = false
+            }
         }
     }
 
@@ -294,6 +297,11 @@ export default class World {
         }
     }
 
+    executeAutoPlay() {
+        this.autoPlay = true
+        this.handOverToNaive()
+    }
+
     returnTurn() {
         const [ currentTerm ] = this.turns
         return currentTerm
@@ -325,7 +333,7 @@ export default class World {
             ...this.turns,
         ]
 
-        if (this.returnTurn().isNaive()) {
+        if (this.returnTurn().isNaive() || this.autoPlay) {
             this.handOverToNaive()
         }
     }
@@ -353,7 +361,7 @@ export default class World {
         })
 
         this.reRender()
-        document.getElementById('end-turn').disabled = false
+        document.getElementById('end-turn').disabled = true
     }
 
     clear() {

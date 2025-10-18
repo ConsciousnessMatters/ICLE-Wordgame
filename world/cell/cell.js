@@ -150,7 +150,7 @@ export default class Cell {
             '0x14',
             '7x14',
             '14x14',
-        ].includes(`${this.columnIndex}x${this.rowIndex}`)
+        ].includes(`${this.columnIndex}x${this.rowIndex}`) && this.board
     }
 
     isDoubleWordCell() {
@@ -172,7 +172,7 @@ export default class Cell {
             '10x11',
             '9x12',
             '7x7',
-        ].includes(`${this.columnIndex}x${this.rowIndex}`)
+        ].includes(`${this.columnIndex}x${this.rowIndex}`) && this.board
     }
 
     isQuadLetterCell() {
@@ -185,7 +185,7 @@ export default class Cell {
             '6x9',
             '8x9',
             '9x8',
-        ].includes(`${this.columnIndex}x${this.rowIndex}`)
+        ].includes(`${this.columnIndex}x${this.rowIndex}`) && this.board
     }
 
     isGameContinuous() {
