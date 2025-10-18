@@ -75,6 +75,14 @@ export default class Cell {
         return this.hasLetterAdjacent({ columnOffset: + 1, rowOffset: 0 })
     }
 
+    hasLetterHorizontally() {
+        return this.hasLetterToLeft() || this.hasLetterToRight()
+    }
+
+    hasLetterVertically() {
+        return this.hasLetterAbove() || this.hasLetterBelow()
+    }
+
     hasProvisionalLetter() {
         return this.hasLetter() && this.letter.hasTurnRollBackCell()
     }

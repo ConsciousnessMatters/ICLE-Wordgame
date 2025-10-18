@@ -52,7 +52,21 @@ export default class Board extends Grid {
 
     getProvisionalLine() {
         const { columnsWithProvisionalLetters, rowsWithProvisionalLetters } = this.getColumnsAndRowsWithProvisionalLetters()
-        const [ provisionalLine ] = columnsWithProvisionalLetters.length === 1 ? columnsWithProvisionalLetters : rowsWithProvisionalLetters
+        const probablyColumnPlay = columnsWithProvisionalLetters.length === 1
+        const probablyRowPlay = rowsWithProvisionalLetters.length === 1
+        const emptyPlay = columnsWithProvisionalLetters.length === 0 && rowsWithProvisionalLetters.length === 0
+
+        if (emptyPlay) {
+            return []
+        }
+
+        const [ firstColumn ] = columnsWithProvisionalLetters
+        const [ firstColumnFirstProvisionalLetter ] = firstColumn.getProvisionalLetters()
+        const makesColumnFromExisting = firstColumnFirstProvisionalLetter.hasLetterVertically()
+
+        const isColumnPlay = (probablyColumnPlay && ! probablyRowPlay) || makesColumnFromExisting
+
+        const [ provisionalLine ] = isColumnPlay ? columnsWithProvisionalLetters : rowsWithProvisionalLetters
         return provisionalLine
     }
 

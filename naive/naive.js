@@ -77,7 +77,6 @@ export default class Naive {
             placements: this.placements,
             options: this.optionSpace.length
         })
-        // debugger
 
         this.playBestOption()
         this.cleanupOptionSpace()
@@ -117,17 +116,9 @@ export default class Naive {
                         return tileRackCell ? false : true
                     })
 
-                    // this.world.reRender()
-                    // debugger
-
                     const provisionalLine = this.world.board.getProvisionalLine()
                     const firstProvisionalLetterIndex = provisionalLine.getFirstProvisionalLetterIndex()
                     const word = provisionalLine.getWordAtIndex(firstProvisionalLetterIndex)
-
-                    if (! word) {
-                        // debugger
-                        // ToDo: This shouldn't fire as often as it did before I commented it out.
-                    }
 
                     if (word && word.isDictionaryMatch() && this.calculateScoreIfPlayValid()) {
                         const newOption = {
@@ -135,7 +126,6 @@ export default class Naive {
                             score: this.calculateScoreIfPlayValid(),
                         }
                         this.addOption(newOption)
-                        // debugger
                     }
 
                     this.world.board.rollbackBoardTiles()
@@ -205,7 +195,6 @@ export default class Naive {
         if (! this.optionSpace.includes((option) => option.getKey() === newOptionKey)) {
             this.optionSpace.push(newOption)
             this.ghostPlayOption(newOption)
-            // debugger
         }
     }
 
@@ -261,7 +250,6 @@ export default class Naive {
     playBestOption() {
         const bestOption = this.getBestOption()
         this.playOption(bestOption)
-        // debugger
     }
 }
 
