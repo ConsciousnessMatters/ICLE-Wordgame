@@ -22,14 +22,19 @@ const scoreUpdateFunction = ({
     totalNaivePoints,
 }) => {
     const entry = isHuman ? document.createElement('tr') : document.querySelector('#scores > table tr:last-child')
-    entry.className = 'score-entry'
-    entry.innerHTML = `
-        <td>${roundNumber}</td>
-        <td>${humanWordPoints}</td>
-        <td>${totalHumanPoints}</td>
-        <td>${isHuman ? '' : naiveWordPoints}</td>
-        <td>${isHuman ? '' : totalNaivePoints}</td>
-    `
+
+    if (isHuman) {
+        entry.innerHTML = `
+            <td>${roundNumber}</td>
+            <td>${humanWordPoints}</td>
+            <td>${totalHumanPoints}</td>
+        `
+    } else {
+        entry.insertAdjacentHTML('beforeend', `
+            <td>${naiveWordPoints}</td>
+            <td>${totalNaivePoints}</td>
+        `)
+    }
 
     document.querySelector('#scores > table > tbody').appendChild(entry)
 }

@@ -6,6 +6,7 @@ export default class TileRack extends Grid {
     columnQuantity = 7
     rowHeight = 40
     columnWidth = 40
+    canvasContext = null
 
     constructor({ canvasContext }) {
         super()

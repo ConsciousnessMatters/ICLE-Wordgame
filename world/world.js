@@ -289,7 +289,7 @@ export default class World {
         })
         this.reRender()
         this.turns = [
-            this.returnTurn().returnNewTurn(),
+            this.returnTurn().returnNewTurn(newScore),
             ...this.turns,
         ]
 

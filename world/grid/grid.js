@@ -6,6 +6,7 @@ import Letter from '../letter/letter.js'
 export default class Grid {
     columns = []
     rows = []
+    canvasContext = null
 
     getCellAtPixelLocation({ x, y }) {
         return this.cells.find((cell) => {
@@ -56,7 +57,7 @@ export default class Grid {
 
     import(configuration) {
         [...configuration].forEach((letter, index) => {
-            this.cells[index].addLetter(letter !== '_'  ? new Letter({ type: letter }) : null)
+            this.cells[index].addLetter(letter !== '_'  ? new Letter({ canvasContext: this.canvasContext, type: letter }) : null)
             return 
         })
     }
