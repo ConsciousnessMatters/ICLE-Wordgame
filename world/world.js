@@ -264,12 +264,12 @@ export default class World {
 
         const actionSpace = {
             moveableLetters: [
-                ...tileRackLetters,
-                ...moveableBoardLetters,
+                ...tileRackLetters.map((cell) => cell.icleExport()),
+                ...moveableBoardLetters.map((cell) => cell.icleExport()),
             ],
             destinations: [
-                ...boardDestinations,
-                ...tileRackDestinations,
+                ...boardDestinations.map((cell) => cell.icleExport()),
+                ...tileRackDestinations.map((cell) => cell.icleExport()),
             ],
             endTurn: sharedSystem.actions.EndTurn,
         }

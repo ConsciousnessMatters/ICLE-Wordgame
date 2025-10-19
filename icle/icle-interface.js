@@ -26,6 +26,11 @@ export default class IcleInterface {
             scores,
             actionSpace,
         })
+
+        const experience = new IcleExperience()
+        const output = this.icleKernel.input(experience)
+
+        this.output(output)
     }
 
     output({
