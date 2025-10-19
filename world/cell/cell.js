@@ -1,3 +1,6 @@
+import { sharedSystem } from "../shared-system.js"
+import { constants } from "../system.js"
+
 export default class Cell {
     id
     canvasContext
@@ -245,8 +248,39 @@ export default class Cell {
         if (this.letter) this.letter.rollback(this)
     }
 
-    export() {
+    naiveExport() {
         return this.getLetterType() ?? '_'
+    }
+
+    icleExport() {
+        return {
+            type: this.getLetterType(),
+            value: this.getLetterValue(),
+            committed: this.hasComittedLetter(),
+            special: this.specialProperties(),
+        }
+    }
+
+    specialProperties() {
+        let specialProperties = []
+
+        if (this.isStartCell()) {
+            specialProperties.push(sharedSystem.descriptions.StartCell)
+        }
+
+        if (this.isQuadWordCell()) {
+            specialProperties.push(sharedSystem.descriptions.QuadWordScoreCell)
+        }
+
+        if (this.isDoubleWordCell()) {
+            specialProperties.push(sharedSystem.descriptions.DoubleWordScoreCell)
+        }
+
+        if (this.isQuadLetterCell()) {
+            specialProperties.push(sharedSystem.descriptions.QuadLetterScoreCell)
+        }
+
+        return specialProperties
     }
 
     render() {

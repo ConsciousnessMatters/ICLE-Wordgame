@@ -25,6 +25,10 @@ export default class Line {
         }
     }
 
+    getLetters() {
+        return this.cells.filter((cell) => cell.hasLetter())
+    }
+
     getProvisionalLetters() {
         return this.cells.filter((cell) => cell.hasProvisionalLetter())
     }

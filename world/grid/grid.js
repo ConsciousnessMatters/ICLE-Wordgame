@@ -1,6 +1,5 @@
 import Column from '../grid/column.js'
 import Row from '../grid/row.js'
-import Cell from '../cell/cell.js'
 import Letter from '../letter/letter.js'
 
 export default class Grid {
@@ -51,8 +50,20 @@ export default class Grid {
         return cell
     }
 
-    export() {
-        return this.cells.reduce((accumulator, cell) => accumulator + cell.export(), '')
+    getCellsWithProvisionalLetters() {
+        return this.cells.filter((cell) => cell.hasProvisionalLetter())
+    }
+
+    getCellsWhichAreEmpty() {
+        return this.cells.filter((cell) => ! cell.hasLetter())
+    }
+
+    naiveExport() {
+        return this.cells.reduce((accumulator, cell) => accumulator + cell.naiveExport(), '')
+    }
+
+    icleExport() {
+        return this.cells.map((cell) => cell.icleExport())
     }
 
     import(configuration) {

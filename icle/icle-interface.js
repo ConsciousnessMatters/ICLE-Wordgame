@@ -1,3 +1,5 @@
+import { constants } from './system.js'
+
 export default class IcleInterface {
     _type = constants.type.IcleInterface
     _v = constants.v.V1
@@ -8,7 +10,7 @@ export default class IcleInterface {
         this.id = crypto.randomUUID()
     }
 
-    assignInterface(icleKernel) {
+    assignKernel(icleKernel) {
         this.icleKernel = icleKernel
     }
     
@@ -16,8 +18,14 @@ export default class IcleInterface {
         board,
         tileRack,
         scores,
+        actionSpace,
     }) {
-
+        console.debug({
+            board,
+            tileRack,
+            scores,
+            actionSpace,
+        })
     }
 
     output({

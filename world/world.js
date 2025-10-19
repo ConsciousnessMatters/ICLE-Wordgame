@@ -2,6 +2,7 @@ import Board from './board/board.js'
 import TileRack from './tile-rack/tile-rack.js'
 import LettersBag from './letters-bag/letters-bag.js'
 import Turn from './turn.js'
+import { sharedSystem } from './shared-system.js'
 
 export default class World {
     turns
@@ -15,6 +16,7 @@ export default class World {
     words
     scoreUpdateFunction
     naive
+    icle
     shadowMoves = []
     bestMoves = []
     shadowQueueAnimationFrameId
@@ -24,7 +26,8 @@ export default class World {
         canvasContext = null, 
         words, 
         scoreUpdateFunction = () => {}, 
-        naive = null 
+        naive = null,
+        icle = null,
     }) {
         this.canvasContext = canvasContext
         this.board = new Board({ canvasContext, words, world: this })
@@ -34,7 +37,8 @@ export default class World {
         this.turns = [new Turn(1)]
         this.words = words
         this.scoreUpdateFunction = scoreUpdateFunction
-        this.naive = naive ?? null
+        this.naive = naive
+        this.icle = icle
         this.processShadowMoveQueue = this.processShadowMoveQueue.bind(this)
 
         this.setupTileRacks()
@@ -74,6 +78,7 @@ export default class World {
         const cancelDrag = () => {
             if (movingLetter) {
                 moveOriginCell.addLetter(movingLetter)
+                this.updateIcle()
                 movingLetter = null
                 this.reRender()
             }
@@ -136,12 +141,14 @@ export default class World {
 
             if (movingLetter && boardCell && ! boardCell.hasLetter()) {
                 boardCell.addLetter(movingLetter)
+                this.updateIcle()
                 movingLetter = null
                 this.reRender()
             }
 
             if (movingLetter && tileRackCell && ! tileRackCell.hasLetter()) {
                 tileRackCell.addLetter(movingLetter)
+                this.updateIcle()
                 tileRackCell.commit()
                 movingLetter = null
                 this.reRender()
@@ -216,12 +223,14 @@ export default class World {
         } else if (type === 'normal') {
             this.shadowMoves = []
         }
+
+        this.updateIcle()
     }
 
     handOverToNaive() {
         document.getElementById('end-turn').disabled = true
-        const tileRackExport = this.naiveTileRack.export()
-        const boardExport = this.board.export()
+        const tileRackExport = this.naiveTileRack.naiveExport()
+        const boardExport = this.board.naiveExport()
         this.messageNaive({
             command: 'takeTurn',
             tileRackExport,
@@ -229,12 +238,53 @@ export default class World {
         })
     }
 
+    updateIcle(actionSpace = []) {{
+        const tileRackExport = this.naiveTileRack.icleExport()
+        const boardExport = this.board.icleExport()
+        const scores = {
+            totalHumanPoints: this.scores.reduce((accumulator, [ newHumanScore, newNaiveScore ]) => accumulator + newHumanScore, 0),
+            totalNaivePoints: this.scores.reduce((accumulator, [ newHumanScore, newNaiveScore ]) => accumulator + newNaiveScore, 0),
+        }
+
+        this.messageIcle({
+            tileRackExport,
+            boardExport,
+            scores,
+            actionSpace,
+        })
+    }}
+
+    handOverToIcle() {
+        const tileRackLetters = this.humanTileRack.getRow(0).getLetters()
+        const moveableBoardLetters = this.board.getCellsWithProvisionalLetters()
+        const boardDestinations = this.board.getCellsWhichAreEmpty()
+        const tileRackDestinations = this.humanTileRack.getCellsWhichAreEmpty()
+
+        const actionSpace = {
+            moveableLetters: [
+                ...tileRackLetters,
+                ...moveableBoardLetters,
+            ],
+            destinations: [
+                ...boardDestinations,
+                ...tileRackDestinations,
+            ],
+            endTurn: sharedSystem.actions.EndTurn,
+        }
+        this.updateIcle(actionSpace)
+    }
+
     setupControls() {
         const endTurn = (e) => {
             this.endTurn()
         }
 
+        const icleTurn = (e) => {
+            this.handOverToIcle()
+        }
+
         document.getElementById('end-turn').addEventListener('click', endTurn)
+        document.getElementById('icle-turn').addEventListener('click', icleTurn)
     }
 
     setupWorkerMessaging() {
@@ -272,9 +322,9 @@ export default class World {
 
     exportGameState() {
         console.log({
-            humanTileRack: this.humanTileRack.export(),
-            naiveTileRack: this.naiveTileRack.export(),
-            board: this.board.export(),
+            humanTileRack: this.humanTileRack.naiveExport(),
+            naiveTileRack: this.naiveTileRack.naiveExport(),
+            board: this.board.naiveExport(),
         })
     }
 
@@ -293,6 +343,14 @@ export default class World {
                     workerKey,
                     workerQuantity: Object.entries(this.naive).length,
                 })
+            })
+        }
+    }
+
+    messageIcle(message) {
+        if (this.icle) {
+            this.icle.postMessage({
+                ...message,
             })
         }
     }
@@ -332,6 +390,8 @@ export default class World {
             this.returnTurn().returnNewTurn(newScore),
             ...this.turns,
         ]
+
+        this.updateIcle()
 
         if (this.returnTurn().isNaive() || this.autoPlay) {
             this.handOverToNaive()

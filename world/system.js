@@ -3,5 +3,5 @@ export const constants = {
     },
     v: {
         V1: 1,
-    }
+    },
 }

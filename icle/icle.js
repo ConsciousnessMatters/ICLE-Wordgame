@@ -1,5 +1,5 @@
-import IcleKernel from './icle-kernel'
-import IcleInterface from './icle-interface'
+import IcleKernel from './icle-kernel.js'
+import IcleInterface from './icle-interface.js'
 import { constants } from './system.js'
 
 export default class Icle {
@@ -14,9 +14,25 @@ export default class Icle {
 
         this.icleKernel.assignInterface(this.icleInterface)
         this.icleInterface.assignKernel(this.icleKernel)
+
+        this.setupMessaging()
     }
 
-    input() {
-        this.icleInterface.input()
+    input(sensoryData) {
+        this.icleInterface.input(sensoryData)
+    }
+    
+    setupMessaging() {
+        self.onmessage = (event) => {
+            this.input({
+                board: event.data?.boardExport,
+                tileRack: event.data?.tileRackExport,
+                scores: event.data?.scores,
+                actionSpace: event.data?.actionSpace,
+            })
+        }
     }
 }
+
+const icle = new Icle()
+icle.setupMessaging()
