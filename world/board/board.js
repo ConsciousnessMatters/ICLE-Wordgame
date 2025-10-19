@@ -110,8 +110,6 @@ export default class Board extends Grid {
                 return ! (intersectingWord.lineType === filterType && intersectingWord.cells.length === 1)
             })
 
-            debugger
-
             return [
                 ...accumulator,
                 ...filterOrthogonal,
