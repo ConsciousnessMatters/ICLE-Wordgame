@@ -52,11 +52,13 @@ export default class Board extends Grid {
 
     getProvisionalLine() {
         const { columnsWithProvisionalLetters, rowsWithProvisionalLetters } = this.getColumnsAndRowsWithProvisionalLetters()
-        const probablyColumnPlay = columnsWithProvisionalLetters.length === 1
-        const probablyRowPlay = rowsWithProvisionalLetters.length === 1
-        const emptyPlay = columnsWithProvisionalLetters.length === 0 && rowsWithProvisionalLetters.length === 0
+        const isColumnPlay = columnsWithProvisionalLetters.length === 1 && rowsWithProvisionalLetters.length > 1
+        const isRowPlay = rowsWithProvisionalLetters.length === 1 && columnsWithProvisionalLetters.length > 1
+        const isEmptyPlay = columnsWithProvisionalLetters.length === 0 && rowsWithProvisionalLetters.length === 0
+        const isInvalidPlay = columnsWithProvisionalLetters.length > 1 && rowsWithProvisionalLetters.length > 1
+        const isUncertainPlay = columnsWithProvisionalLetters.length === 1 && rowsWithProvisionalLetters.length === 1
 
-        if (emptyPlay) {
+        if (isEmptyPlay || isInvalidPlay) {
             return []
         }
 
@@ -64,9 +66,11 @@ export default class Board extends Grid {
         const [ firstColumnFirstProvisionalLetter ] = firstColumn.getProvisionalLetters()
         const makesColumnFromExisting = firstColumnFirstProvisionalLetter.hasLetterVertically()
 
-        const isColumnPlay = (probablyColumnPlay && ! probablyRowPlay) || makesColumnFromExisting
+        const isDefinitelyColumnPlay = isColumnPlay ? isColumnPlay : (
+            isUncertainPlay ? makesColumnFromExisting : false
+        )
 
-        const [ provisionalLine ] = isColumnPlay ? columnsWithProvisionalLetters : rowsWithProvisionalLetters
+        const [ provisionalLine ] = isDefinitelyColumnPlay ? columnsWithProvisionalLetters : rowsWithProvisionalLetters
         return provisionalLine
     }
 
@@ -105,6 +109,8 @@ export default class Board extends Grid {
                 // ToDo: Score could be factored in here to allow one word orthogonal plays
                 return ! (intersectingWord.lineType === filterType && intersectingWord.cells.length === 1)
             })
+
+            debugger
 
             return [
                 ...accumulator,
