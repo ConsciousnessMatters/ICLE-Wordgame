@@ -1,5 +1,6 @@
 export const sharedSystem = {
     actions: {
+        Move: 'action:move',
         EndTurn: 'action:endTurn',
     },
     descriptions: {

@@ -222,6 +222,8 @@ export default class World {
             this.board.rollbackBoardTiles()
         } else if (type === 'normal') {
             this.shadowMoves = []
+        } else if (type === 'icle') {
+            this.reRender()
         }
 
         this.updateIcle()
@@ -288,7 +290,7 @@ export default class World {
     }
 
     setupWorkerMessaging() {
-        const onWorkerMessage = (event) => {
+        const onNaiveMessage = (event) => {
             switch(event.data?.command) {
                 case 'makeMove':
                     this.queueBestMove({
@@ -309,9 +311,27 @@ export default class World {
                     break
             }
         }
+
+        const onIcleMessage = (event) => {
+            switch(event.data?.action) {
+                case sharedSystem.actions.Move:
+                    this.makeMove({
+                        move: event.data?.move,
+                        type: 'icle',
+                    })
+                    console.debug('Icle Makes Move')
+                    break
+                case sharedSystem.actions.EndTurn:
+                    this.endTurn()
+                    console.debug('Icle Ends Turn')
+                    break
+            }
+        }
+        
         Object.entries(this.naive).forEach(([key, worker]) => {
-            worker.onmessage = onWorkerMessage
+            worker.onmessage = onNaiveMessage
         })
+        this.icle.onmessage = onIcleMessage
     }
 
     setupConsoleAccess() {
