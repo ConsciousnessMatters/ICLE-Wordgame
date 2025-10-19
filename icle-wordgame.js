@@ -13,6 +13,8 @@ for (let i = 0; i < workerQuantity; i++) {
     naive[`t${i}`] = new Worker(`./naive/naive.js?v=${Date.now()}`, { type: 'module' })
 }
 
+const icle = new Worker(`./icle/icle.js?v=${Date.now()}`, { type: 'module' })
+
 const scoreUpdateFunction = ({
     roundNumber,
     isHuman,
@@ -47,5 +49,11 @@ canvasContext.canvas.width = canvasContext.canvas.scrollWidth * scaleFactor
 canvasContext.canvas.height = canvasContext.canvas.scrollHeight * scaleFactor
 canvasContext.scale(scaleFactor, scaleFactor)
 
-const world = new World({ canvasContext, words, scoreUpdateFunction, naive })
+const world = new World({ 
+    canvasContext, 
+    words, 
+    scoreUpdateFunction, 
+    naive, 
+    icle,
+})
 world.render()
