@@ -13,4 +13,8 @@ export default class IcleKernel {
     assignInterface(icleInterface) {
         this.icleInterface = icleInterface
     }
+
+    input() {
+        // Takes an experience and does things with it to change future perceptions.
+    }
 }

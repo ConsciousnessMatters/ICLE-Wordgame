@@ -1,3 +1,4 @@
+import IcleExperience from './icle-experience.js'
 import { constants } from './system.js'
 
 export default class IcleInterface {
@@ -30,7 +31,9 @@ export default class IcleInterface {
         const experience = new IcleExperience()
         const output = this.icleKernel.input(experience)
 
-        this.output(output)
+        if (output) {
+            this.output(output)
+        }
     }
 
     output({

@@ -70,13 +70,16 @@ export default class Naive {
         })
 
         const end = performance.now()
-        console.log({
-            naiveTurnTime: `${((end - start) / 1000).toFixed(2)} s`,
-            combinations: this.combinations,
-            permutations: this.permutations,
-            placements: this.placements,
-            options: this.optionSpace.length
-        })
+
+        if (this.combinations) {
+            console.log({
+                naiveTurnTime: `${((end - start) / 1000).toFixed(2)} s`,
+                combinations: this.combinations,
+                permutations: this.permutations,
+                placements: this.placements,
+                options: this.optionSpace.length
+            })
+        }
 
         this.playBestOption()
         this.cleanupOptionSpace()
