@@ -10,8 +10,13 @@ export default class Naive {
     combinations = 0
     permutations = 0
     placements = 0
+    words = null
+    wordAnagramIndices = null
 
     constructor() {
+        this.words = words
+        this.wordAnagramIndices = this.generateAnagramIndices(words)
+
         this.world = new World({ 
             canvasContext: null, 
             words, 
@@ -91,8 +96,13 @@ export default class Naive {
 
         for (const combination of this.yieldCombination(tileRackCells)) {
             this.combinations++
+            const lettersInLineAlready = line.toText().replaceAll('_', '')
+            const combinationText = combination.reduce((accumulator, cell) => accumulator + cell.getLetterType(), '')
+            const combinationAndExistingLetters = combinationText + lettersInLineAlready
 
-            // ToDo: Anagram checking of combination + existing placed letters could optimize things here.
+            if (! this.hasAnyValidAnagram(combinationAndExistingLetters)) {
+                continue
+            }
 
             const iterator = this.yieldPlacement(combination, playableSpaces)
             const noValidPlacement = iterator.next().done
@@ -182,6 +192,22 @@ export default class Naive {
         } else {
             return false
         }
+    }
+
+    generateAnagramIndices(words) {
+        const anagramIndices = new Set();
+
+        for (const word of words) {
+            const anagramIndex = [...word].sort().join('')
+            anagramIndices.add(anagramIndex)
+        }
+
+        return anagramIndices
+    }
+
+    hasAnyValidAnagram(wordCandidate) {
+        const anagramIndex = [...wordCandidate].sort().join('')
+        return this.wordAnagramIndices.has(anagramIndex)
     }
 
     addOption({ moves, score }) {
