@@ -42,5 +42,5 @@ export default class Icle {
     }
 }
 
-// const icle = new Icle()
-// self.icle = icle
+const icle = new Icle()
+self.icle = icle

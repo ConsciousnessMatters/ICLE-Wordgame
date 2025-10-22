@@ -14,7 +14,9 @@ export default class IcleKernel {
         this.icleInterface = icleInterface
     }
 
-    input() {
+    input(icpleExperience) {
+
         // Takes an experience and does things with it to change future perceptions.
+        debugger
     }
 }
