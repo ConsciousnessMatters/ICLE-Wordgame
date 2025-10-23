@@ -11,7 +11,7 @@ export default class TileRackPercept extends GridPercept {
             sensoryData,
         })
 
-        this.inputs = sensoryData.board.map((input, index) => {
+        this.inputs = sensoryData.tileRack.map((input, index) => {
             return this.inputDataTransformer(input, index)
         })
     }

@@ -1,7 +1,7 @@
 import ActionPercept from './percepts/action-percept.js'
 import BoardPercept from './percepts/board-percept.js'
 import CursorPercept from './percepts/cursor-percept.js'
-import TileRackPerception from './percepts/grid-percpt.js'
+import TileRackPerception from './percepts/tilerack-percept.js'
 import { constants } from './system.js'
 
 export default class IclePerception {
