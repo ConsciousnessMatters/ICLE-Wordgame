@@ -49,7 +49,9 @@ export default class IcleInterface {
         const endTurnCount = 1
         const actions = this.perception.percepts.actionSpace.actions
 
-        if (actionChoice < tileRackCount) {
+        if (actions.length === 0) {
+            // Do Nothing
+        } else if (actionChoice < tileRackCount) {
             if (this.cursor === null) {
                 this.cursor = actions[actionChoice]
                 console.debug('Cursor Now Occupied')

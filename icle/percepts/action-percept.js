@@ -14,10 +14,24 @@ export default class ActionPercept extends Percept {
     }
 
     actionDataTransformer(actionSpace) {
-        return [
-            ...actionSpace.moveableLetters,
-            ...actionSpace.destinations,
-            actionSpace.endTurn,
-        ]
+        let allPossibleActions = []
+
+        for (const [key, possibilities] of Object.entries(actionSpace)) {
+            if (Array.isArray(possibilities)) {
+                allPossibleActions = [
+                    ...allPossibleActions,
+                    ...possibilities,
+                ]
+            } else if (typeof possibilities === 'string') {
+                allPossibleActions = [
+                    ...allPossibleActions,
+                    possibilities,
+                ]
+            } else {
+                throw new Error('Unexpected Action Input')
+            }
+        }
+
+        return allPossibleActions
     }
 }
