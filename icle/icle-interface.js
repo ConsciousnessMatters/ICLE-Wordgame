@@ -13,7 +13,7 @@ export default class IcleInterface {
     experience = null
     lastPerception = null
     perception = null
-    cursor = null
+    cursor = {}
 
     constructor() {
         this.id = crypto.randomUUID()
@@ -63,7 +63,7 @@ export default class IcleInterface {
             if (this.cursor !== null) {
                 const moveFrom = this.cursor
                 const moveTo = actions[actionChoice]
-                this.cursor = null
+                this.cursor = {}
 
                 this.icleRoot.output({
                     action: sharedSystem.actions.Move,
