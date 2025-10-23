@@ -4,6 +4,7 @@ import { constants } from '../system.js'
 export default class BoardPercept extends GridPercept {
     _type = constants.type.BoardPercept
     columnQuantity = 15
+    lastBoard
 
     constructor({
         lastPerception,
@@ -19,11 +20,7 @@ export default class BoardPercept extends GridPercept {
 
     inputDataTransformer(newInput, index) {
         const lastInput = this.lastBoard ? this.lastBoard.inputs[index] : null
-
-        const lastInputWithoutHasChanges = {
-            ...lastInput,
-        }
-        delete lastInputWithoutHasChanges.hasChanged
+        const lastInputWithoutHasChanges = this.getShallowCopyWithoutHasChanged(lastInput)
 
         const newInputWithoutHasChanges = {
             ...newInput,
@@ -31,11 +28,9 @@ export default class BoardPercept extends GridPercept {
             row: Math.floor(index / this.columnQuantity),
         }
 
-        const hasChanged = this.hasChanged(lastInputWithoutHasChanges, newInputWithoutHasChanges)
-
         return {
             ...newInputWithoutHasChanges,
-            hasChanged,
+            hasChanged: this.hasChanged(lastInputWithoutHasChanges, newInputWithoutHasChanges),
         }
     }
 }

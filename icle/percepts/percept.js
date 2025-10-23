@@ -46,4 +46,12 @@ export default class Percept {
 
         return false
     }
+
+    getShallowCopyWithoutHasChanged(a) {
+        const b = {
+            ...a
+        }
+        delete b.hasChanged
+        return b
+    }
 }
