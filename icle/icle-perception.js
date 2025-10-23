@@ -27,12 +27,15 @@ export default class IclePerception {
 
     interpretSensoryData() {
         this.percepts.board = new BoardPercept({
+            lastPerception: this.lastPerception,
             sensoryData: this.sensoryData,
         })
         this.percepts.tileRack = new TileRackPerception({
+            lastPerception: this.lastPerception,
             sensoryData: this.sensoryData,
         })
         this.percepts.cursor = new CursorPercept({
+            lastPerception: this.lastPerception,
             cursor: this.cursor,
         })
         this.percepts.actionSpace = new ActionPercept({
