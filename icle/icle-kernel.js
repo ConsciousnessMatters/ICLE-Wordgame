@@ -1,3 +1,4 @@
+import IcleExperience from './icle-experience.js'
 import { constants } from './system.js'
 
 export default class IcleKernel {
@@ -14,9 +15,10 @@ export default class IcleKernel {
         this.icleInterface = icleInterface
     }
 
-    input(icpleExperience) {
+    input(icleExperience) {
+        const actionTotal = icleExperience.perception.percepts.actionSpace.actions
+        const actionChoice = Math.floor(Math.random() * actionTotal.length)
 
-        // Takes an experience and does things with it to change future perceptions.
-        debugger
+        return actionChoice
     }
 }

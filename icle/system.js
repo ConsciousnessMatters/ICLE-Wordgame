@@ -8,8 +8,9 @@ export const constants = {
         Percept: 10,
         BoardPercept: 11,
         TileRackPercept: 12,
-        ActionSpacePercept: 13,
+        ActionPercept: 13,
         GridPercept: 14,
+        CursorPercept: 15,
     },
     v: {
         V1: 1,

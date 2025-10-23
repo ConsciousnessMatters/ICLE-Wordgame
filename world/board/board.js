@@ -11,14 +11,21 @@ export default class Board extends Grid {
     columnQuantity = 15
     rowHeight = 40
     columnWidth = 40
+    gridIndex
     words = null
     world = null
 
-    constructor({ canvasContext, words, world }) {
+    constructor({ 
+        canvasContext, 
+        words, 
+        world,
+        gridIndex,
+    }) {
         super()
         const canvasWidth = canvasContext ? (canvasContext.canvas.width / 2) : 1920
         const gridWidth = this.columnQuantity * this.columnWidth
         const gridOffsetX = (canvasWidth / 2) - (gridWidth / 2)
+        this.gridIndex = gridIndex
 
         this.canvasContext = canvasContext
         this.cells = Array.from({ length: this.rowQuantity * this.columnQuantity }).map((_, position) => {
@@ -30,6 +37,7 @@ export default class Board extends Grid {
                 board: this,
                 rowIndex,
                 columnIndex,
+                gridIndex,
                 gridOffsetX,
                 gridOffsetY: 20,
                 rowHeight: this.rowHeight,

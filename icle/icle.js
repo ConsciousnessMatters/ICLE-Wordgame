@@ -1,7 +1,6 @@
 import IcleKernel from './icle-kernel.js'
 import IcleInterface from './icle-interface.js'
 import { constants } from './system.js'
-import { sharedSystem } from '../world/shared-system.js'
 
 export default class Icle {
     _type = constants.type.Icle
@@ -15,6 +14,7 @@ export default class Icle {
 
         this.icleKernel.assignInterface(this.icleInterface)
         this.icleInterface.assignKernel(this.icleKernel)
+        this.icleInterface.assignRoot(this)
 
         this.setupMessaging()
     }
@@ -23,11 +23,8 @@ export default class Icle {
         this.icleInterface.input(sensoryData)
     }
 
-    output() {
-        self.postMessage({
-            action: sharedSystem.actions.Move,
-            move: [],
-        })
+    output(actionMessage) {
+        self.postMessage(actionMessage)
     }
     
     setupMessaging() {

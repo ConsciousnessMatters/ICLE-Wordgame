@@ -1,5 +1,5 @@
-import { sharedSystem } from "../shared-system.js"
 import { constants } from "../system.js"
+import { sharedSystem } from '../shared-system.js'
 
 export default class Cell {
     id
@@ -7,6 +7,7 @@ export default class Cell {
     board
     rowIndex
     columnIndex
+    gridIndex
     gridOffsetX
     gridOffsetY
     rowHeight
@@ -20,6 +21,7 @@ export default class Cell {
         board,
         rowIndex,
         columnIndex,
+        gridIndex,
         gridOffsetX, 
         gridOffsetY,
         rowHeight,
@@ -31,6 +33,7 @@ export default class Cell {
         this.board = board
         this.rowIndex = rowIndex
         this.columnIndex = columnIndex
+        this.gridIndex = gridIndex
         this.gridOffsetX = gridOffsetX
         this.gridOffsetY = gridOffsetY
         this.rowHeight = rowHeight
@@ -252,12 +255,20 @@ export default class Cell {
         return this.getLetterType() ?? '_'
     }
 
-    icleExport() {
-        return {
+    icleExport(type = constants.type.PerceptionExport) {
+        return type === constants.type.PerceptionExport ? {
             type: this.getLetterType(),
             value: this.getLetterValue(),
             committed: this.hasComittedLetter(),
             special: this.specialProperties(),
+        } : {
+            type: this.getLetterType(),
+            value: this.getLetterValue(),
+            committed: this.hasComittedLetter(),
+            special: this.specialProperties(),
+            column: this.columnIndex,
+            row: this.rowIndex,
+            grid: this.gridIndex,
         }
     }
 

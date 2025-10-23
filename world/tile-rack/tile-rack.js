@@ -6,14 +6,19 @@ export default class TileRack extends Grid {
     columnQuantity = 7
     rowHeight = 40
     columnWidth = 40
+    gridIndex
     canvasContext = null
 
-    constructor({ canvasContext }) {
+    constructor({ 
+        canvasContext,
+        gridIndex,
+    }) {
         super()
         const canvasWidth = canvasContext ? (canvasContext.canvas.width / 2) : 1920
         const canvasHeight = canvasContext ? (canvasContext.canvas.height / 2) : 1080
         const gridWidth = this.columnQuantity * this.columnWidth
         const gridOffsetX = (canvasWidth / 2) - (gridWidth / 2)
+        this.gridIndex = gridIndex
 
         this.canvasContext = canvasContext
         this.cells = Array.from({ length: this.rowQuantity * this.columnQuantity }).map((_, position) => {
@@ -25,6 +30,7 @@ export default class TileRack extends Grid {
                 board: null,
                 rowIndex,
                 columnIndex,
+                gridIndex,
                 gridOffsetX,
                 gridOffsetY: canvasHeight - 60,
                 rowHeight: this.rowHeight,

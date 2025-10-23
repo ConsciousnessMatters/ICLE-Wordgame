@@ -3,6 +3,7 @@ import TileRack from './tile-rack/tile-rack.js'
 import LettersBag from './letters-bag/letters-bag.js'
 import Turn from './turn.js'
 import { sharedSystem } from './shared-system.js'
+import { constants } from './system.js'
 
 export default class World {
     turns
@@ -30,9 +31,20 @@ export default class World {
         icle = null,
     }) {
         this.canvasContext = canvasContext
-        this.board = new Board({ canvasContext, words, world: this })
-        this.humanTileRack = new TileRack({ canvasContext })
-        this.naiveTileRack = new TileRack({ canvasContext })
+        this.board = new Board({ 
+            canvasContext, 
+            words, 
+            world: this, 
+            gridIndex: 0,
+        })
+        this.humanTileRack = new TileRack({ 
+            canvasContext,
+            gridIndex: 1,
+        })
+        this.naiveTileRack = new TileRack({ 
+            canvasContext,
+            gridIndex: 2,
+        })
         this.lettersBag = new LettersBag({ canvasContext })
         this.turns = [new Turn(1)]
         this.words = words
@@ -47,6 +59,17 @@ export default class World {
             this.setupControls()
             this.setupWorkerMessaging()
             this.setupConsoleAccess()
+        }
+    }
+
+    getGridByIndex(gridIndex) {
+        switch(gridIndex) {
+            case 0:
+                return this.board
+            case 1:
+                return this.humanTileRack
+            case 2:
+                return this.naiveTileRack
         }
     }
 
@@ -205,12 +228,16 @@ export default class World {
         const sourceRack = this.returnTurn().isHuman() ? this.humanTileRack : this.naiveTileRack
 
         letterMoves.forEach((letterMove) => {
-            const [ source, destination ] = letterMove
-            const oldCell = sourceRack.getCell({ 
+            const [ source, destination, grid ] = letterMove
+
+            const sourceGrid = grid ? this.getGridByIndex(grid[0]) : sourceRack
+            const targetGrid = grid ? this.getGridByIndex(grid[1]) : this.board
+
+            const oldCell = sourceGrid.getCell({
                 columnIndex: source[0],
                 rowIndex: source[1],
             })
-            const newCell = this.board.getCell({ 
+            const newCell = targetGrid.getCell({
                 columnIndex: destination[0],
                 rowIndex: destination[1],
             })
@@ -264,12 +291,12 @@ export default class World {
 
         const actionSpace = {
             moveableLetters: [
-                ...tileRackLetters.map((cell) => cell.icleExport()),
-                ...moveableBoardLetters.map((cell) => cell.icleExport()),
+                ...tileRackLetters.map((cell) => cell.icleExport(constants.type.ActionExport)),
+                ...moveableBoardLetters.map((cell) => cell.icleExport(constants.type.ActionExport)),
             ],
             destinations: [
-                ...boardDestinations.map((cell) => cell.icleExport()),
-                ...tileRackDestinations.map((cell) => cell.icleExport()),
+                ...boardDestinations.map((cell) => cell.icleExport(constants.type.ActionExport)),
+                ...tileRackDestinations.map((cell) => cell.icleExport(constants.type.ActionExport)),
             ],
             endTurn: sharedSystem.actions.EndTurn,
         }

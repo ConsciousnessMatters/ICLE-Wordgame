@@ -1,16 +1,17 @@
 import GridPercept from './grid-percpt.js'
 import { constants } from '../system.js'
 
-export default class BoardPercept extends GridPercept {
-    _type = constants.type.BoardPercept
-    columnQuantity = 15
+export default class CursorPercept extends Percept {
+    _type = constants.type.CursorPercept
 
     constructor({
         sensoryData,
     }) {
-        super()
+        super({
+            sensoryData,
+        })
 
-        this.inputs = sensoryData.board.map((input, index) => {
+        this.input = sensoryData.board.map((input, index) => {
             return this.inputDataTransformer(input, index)
         })
     }
@@ -18,8 +19,6 @@ export default class BoardPercept extends GridPercept {
     inputDataTransformer(input, index) {
         return {
             ...input,
-            column: index % this.columnQuantity,
-            row: Math.floor(index / this.columnQuantity),
         }
     }
 }

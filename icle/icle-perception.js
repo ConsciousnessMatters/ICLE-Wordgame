@@ -1,4 +1,4 @@
-import ActionSpacePercept from './percepts/action-space-percept.js'
+import ActionPercept from './percepts/action-percept.js'
 import BoardPercept from './percepts/board-percept.js'
 import TileRackPerception from './percepts/grid-percpt.js'
 import { constants } from './system.js'
@@ -8,10 +8,7 @@ export default class IclePerception {
     _v = constants.v.V1
     id
     sensoryData
-    percepts
-    boardPerception
-    tileRackPerception
-    actionSpacePerception
+    percepts = {}
 
     constructor({
         lastPerception,
@@ -31,7 +28,7 @@ export default class IclePerception {
         this.percepts.tileRack = new TileRackPerception({
             sensoryData: this.sensoryData,
         })
-        this.percepts.actionables = new ActionSpacePercept({
+        this.percepts.actionSpace = new ActionPercept({
             lastPerception: this.lastPerception,
             sensoryData: this.sensoryData,
         })
