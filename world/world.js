@@ -22,6 +22,7 @@ export default class World {
     bestMoves = []
     shadowQueueAnimationFrameId
     autoPlay = false
+    naivesOnline = 0
 
     constructor({ 
         canvasContext = null, 
@@ -337,6 +338,10 @@ export default class World {
                     }
                     break
             }
+            switch(event.data?.status) {
+                case 'online':
+                    this.handleNaiveOnlineAnnouncement()
+            }
         }
 
         const onIcleMessage = (event) => {
@@ -399,6 +404,14 @@ export default class World {
             this.icle.postMessage({
                 ...message,
             })
+        }
+    }
+
+    handleNaiveOnlineAnnouncement() {
+        this.naivesOnline++
+
+        if (this.naivesOnline === Object.entries(this.naive).length) {
+            document.getElementById('end-turn').disabled = false
         }
     }
 

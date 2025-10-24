@@ -23,6 +23,13 @@ export default class Naive {
             scoreUpdateFunction: () => {}, 
             naive: null,
         })
+        this.announceOnline()
+    }
+
+    announceOnline() {
+        self.postMessage({
+            status: 'online',
+        })
     }
 
     setupMessaging() {
