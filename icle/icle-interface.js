@@ -38,9 +38,12 @@ export default class IcleInterface {
             perception: this.perception,
         })
         
+        const actionChoice = this.icleKernel.input(this.experience)
+        this.perception.recordChoice(actionChoice)
+
         this.lastPerception = this.perception
         this.lastExperience = this.experience
-        this.output(this.icleKernel.input(this.experience))
+        this.output(actionChoice)
     }
 
     output(actionChoice) {

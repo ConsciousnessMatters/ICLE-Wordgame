@@ -1,5 +1,6 @@
 import ActionPercept from './percepts/action-percept.js'
 import BoardPercept from './percepts/board-percept.js'
+import ChoicePercept from './percepts/choice-percept.js'
 import CursorPercept from './percepts/cursor-percept.js'
 import TileRackPerception from './percepts/tilerack-percept.js'
 import { constants } from './system.js'
@@ -41,6 +42,14 @@ export default class IclePerception {
         this.percepts.actionSpace = new ActionPercept({
             lastPerception: this.lastPerception,
             sensoryData: this.sensoryData,
+        })
+        this.percepts.choice = undefined
+    }
+
+    recordChoice(actionChoice) {
+        this.percepts.choice = new ChoicePercept({
+            lastPerception: this.lastPerception,
+            choice: actionChoice,
         })
     }
 }
