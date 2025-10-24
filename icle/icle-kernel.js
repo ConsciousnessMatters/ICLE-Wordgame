@@ -16,6 +16,11 @@ export default class IcleKernel {
     }
 
     input(icleExperience) {
+        /*  
+        *  ToDo: Examine how actions feel and use previous knowledge of bad actions (for given cursor)
+        *  in order to pick an action that does not incurr those negative feelings.
+        */
+
         const actionTotal = icleExperience.perception.percepts.actionSpace.actions
         const actionChoice = Math.floor(Math.random() * actionTotal.length)
 

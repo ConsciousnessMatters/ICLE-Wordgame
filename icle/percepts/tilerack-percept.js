@@ -17,6 +17,8 @@ export default class TileRackPercept extends GridPercept {
     }
 
     inputDataTransformer(input, index) {
+        // ToDo: Implement change detection.
+
         return {
             ...input,
             column: index,
