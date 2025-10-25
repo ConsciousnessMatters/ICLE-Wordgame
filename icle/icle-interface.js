@@ -1,6 +1,6 @@
 import IclePerception from './icle-perception.js'
 import IcleExperience from './icle-experience.js'
-import { constants } from './system.js'
+import { constants, helpers } from './system.js'
 import { sharedSystem } from '../world/shared-system.js'
 
 export default class IcleInterface {
@@ -55,7 +55,7 @@ export default class IcleInterface {
         if (actions.length === 0) {
             // Do Nothing
         } else if (actionChoice < tileRackCount) {
-            if (this.cursor === null) {
+            if (helpers.isDeeplyEqual(this.cursor, {})) {
                 this.cursor = actions[actionChoice]
                 console.debug('Cursor Now Occupied')
             } else {
@@ -63,7 +63,7 @@ export default class IcleInterface {
                 console.debug('Nothing: Cannot fill occupied cursor.')
             }
         } else if (actionChoice < (tileRackCount + boardCount)) {
-            if (this.cursor !== null) {
+            if (! helpers.isDeeplyEqual(this.cursor, {})) {
                 const moveFrom = this.cursor
                 const moveTo = actions[actionChoice]
                 this.cursor = {}
