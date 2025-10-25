@@ -5,8 +5,8 @@ import CursorPercept from './percepts/cursor-percept.js'
 import TileRackPerception from './percepts/tilerack-percept.js'
 import { constants } from './system.js'
 
-export default class IclePerception {
-    _type = constants.type.IclePerception
+export default class Perception {
+    _type = constants.type.Perception
     _v = constants.v.V1
     id
     sensoryData
@@ -51,5 +51,19 @@ export default class IclePerception {
             lastPerception: this.lastPerception,
             choice: actionChoice,
         })
+    }
+
+    hasChanged() {
+        // ToDo: Wire up!
+        return this.percepts.board.hasChanged()
+            || this.percepts.tileRack.hasChanged()
+            || this.percepts.cursor.hasChanged()
+            || this.percepts.actionSpace.hasChanged()
+            || this.percepts.choice.hasChanged()
+    }
+
+    getLastChoice() {
+        // ToDo: Did we try and do something last turn? What was it?
+        // ToDo: Ensure we can handle an empty action space.
     }
 }

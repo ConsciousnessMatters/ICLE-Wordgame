@@ -1,7 +1,7 @@
 import { constants } from './system.js'
 
-export default class IcleExperience {
-    _type = constants.type.IcleExperience
+export default class Experience {
+    _type = constants.type.Experience
     _v = constants.v.V1
     id
     lastExperience
@@ -21,6 +21,15 @@ export default class IcleExperience {
 
     constructEmotions() {
         // If an experience makes us feel sad or happy, then we pay attention to it. We can do pattern matching and abstraction on emotional events.
+        this.constructSadnessOverMisaction()
+    }
+
+    constructSadnessOverMisaction() {
+        if (! this.perception.hasChanged() && this.perception.getLastChoice() !== null) {
+            // Nothing changed, yet we made a move.
+
+
+        }
     }
 
     /*  

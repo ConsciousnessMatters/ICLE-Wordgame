@@ -1,27 +1,26 @@
-import IcleExperience from './icle-experience.js'
 import { constants } from './system.js'
 
-export default class IcleKernel {
-    _type = constants.type.IcleKernel
+export default class Kernel {
+    _type = constants.type.Kernel
     _v = constants.v.V1
     id
-    icleInterface
+    brain
 
     constructor() {
         this.id = crypto.randomUUID()
     }
 
-    assignInterface(icleInterface) {
-        this.icleInterface = icleInterface
+    assignBrain(brain) {
+        this.brain = brain
     }
 
-    input(icleExperience) {
+    input(experience) {
         /*  
         *  ToDo: Examine how actions feel and use previous knowledge of bad actions (for given cursor)
         *  in order to pick an action that does not incurr those negative feelings.
         */
 
-        const actionTotal = icleExperience.perception.percepts.actionSpace.actions
+        const actionTotal = experience.perception.percepts.actionSpace.actions
         const actionChoice = Math.floor(Math.random() * actionTotal.length)
 
         return actionChoice

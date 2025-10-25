@@ -1,33 +1,33 @@
-import IcleKernel from './icle-kernel.js'
-import IcleInterface from './icle-interface.js'
+import Kernel from './kernel.js'
+import Brain from './brain.js'
 import { constants } from './system.js'
 
 export default class Icle {
     _type = constants.type.Icle
     _v = constants.v.V1
-    icleKernel
-    icleInterface
+    kernel
+    brain
 
     constructor() {
-        this.icleKernel = new IcleKernel()
-        this.icleInterface = new IcleInterface()
+        this.kernel = new Kernel()
+        this.brain = new Brain()
 
-        this.icleKernel.assignInterface(this.icleInterface)
-        this.icleInterface.assignKernel(this.icleKernel)
-        this.icleInterface.assignRoot(this)
+        this.kernel.assignBrain(this.brain)
+        this.brain.assignKernel(this.kernel)
+        this.brain.assignIcle(this)
 
-        this.setupMessaging()
+        this.listen()
     }
 
     input(sensoryData) {
-        this.icleInterface.input(sensoryData)
+        this.brain.input(sensoryData)
     }
 
     output(actionMessage) {
         self.postMessage(actionMessage)
     }
     
-    setupMessaging() {
+    listen() {
         self.onmessage = (event) => {
             this.input({
                 board: event.data?.boardExport,

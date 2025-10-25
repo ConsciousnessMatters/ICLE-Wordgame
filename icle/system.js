@@ -1,10 +1,10 @@
 export const constants = {
     type: {
         Icle: 0,
-        IcleKernel: 1,
-        IcleInterface: 2,
-        IcleExperience: 3,
-        IclePerception: 4,
+        Kernel: 1,
+        Brain: 2,
+        Experience: 3,
+        Perception: 4,
         Percept: 10,
         BoardPercept: 11,
         TileRackPercept: 12,
@@ -14,6 +14,9 @@ export const constants = {
     },
     v: {
         V1: 1,
+    },
+    emotions: {
+        inactionRegret: 0,
     }
 }
 

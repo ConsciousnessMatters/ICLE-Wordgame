@@ -1,13 +1,13 @@
-import IclePerception from './icle-perception.js'
-import IcleExperience from './icle-experience.js'
+import Perception from './perception.js'
+import Experience from './experience.js'
 import { constants, helpers } from './system.js'
 import { sharedSystem } from '../world/shared-system.js'
 
-export default class IcleInterface {
-    _type = constants.type.IcleInterface
+export default class Brain {
+    _type = constants.type.Brain
     _v = constants.v.V1
     id
-    icleKernel
+    kernel
     icleRoot
     lastExperience = null
     experience = null
@@ -19,26 +19,26 @@ export default class IcleInterface {
         this.id = crypto.randomUUID()
     }
 
-    assignKernel(icleKernel) {
-        this.icleKernel = icleKernel
+    assignKernel(kernel) {
+        this.kernel = kernel
     }
 
-    assignRoot(icleRoot) {
+    assignIcle(icleRoot) {
         this.icleRoot = icleRoot
     }
     
     input(sensoryData) {
-        this.perception = new IclePerception({
+        this.perception = new Perception({
             lastPerception: this.lastPerception,
             sensoryData,
             cursor: this.cursor,
         })
-        this.experience = new IcleExperience({
+        this.experience = new Experience({
             lastExperience: this.lastExperience,
             perception: this.perception,
         })
         
-        const actionChoice = this.icleKernel.input(this.experience)
+        const actionChoice = this.kernel.input(this.experience)
         this.perception.recordChoice(actionChoice)
 
         this.lastPerception = this.perception

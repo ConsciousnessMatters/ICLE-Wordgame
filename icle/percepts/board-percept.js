@@ -13,24 +13,55 @@ export default class BoardPercept extends GridPercept {
         super()
 
         this.lastBoard = lastPerception?.percepts?.board ?? null
-        this.inputs = sensoryData.board.map((input, index) => {
-            return this.inputDataTransformer(input, index)
-        })
+        this.inputs = sensoryData.board.map((input, index) => this.addPerceptionsToInput(input, index))
     }
 
-    inputDataTransformer(newInput, index) {
+    addPerceptionsToInput(newInput, index) {
         const lastInput = this.lastBoard ? this.lastBoard.inputs[index] : null
         const lastInputWithoutHasChanges = this.getShallowCopyWithoutHasChanged(lastInput)
 
         const newInputWithoutHasChanges = {
             ...newInput,
-            column: index % this.columnQuantity,
-            row: Math.floor(index / this.columnQuantity),
+            ...this.addCoordinatePerception(index, this.columnQuantity),
         }
-
+        
         return {
             ...newInputWithoutHasChanges,
             hasChanged: this.hasChanged(lastInputWithoutHasChanges, newInputWithoutHasChanges),
         }
+    }
+
+    addCoordinatePerception(index, columnQuantity) {
+        return {
+            column: index % columnQuantity,
+            row: Math.floor(index / columnQuantity),
+        }
+    }
+
+    addShapePerception(index) {
+
+        
+
+        // OMG
+        // Include subshapes!!
+    }
+
+    addChangePerception(newInput, index) {
+        const lastInput = this.lastBoard ? this.lastBoard.inputs[index] : null
+        const lastInputWithoutHasChanges = this.getShallowCopyWithoutHasChanged(lastInput)
+
+        const newInputWithoutHasChanges = {
+            ...newInput,
+            ...this.addCoordinatePerception(index, this.columnQuantity),
+        }
+        
+        return {
+            ...newInputWithoutHasChanges,
+            hasChanged: this.hasChanged(lastInputWithoutHasChanges, newInputWithoutHasChanges),
+        }
+    }
+
+    hasChanged() {
+        // Implement
     }
 }
